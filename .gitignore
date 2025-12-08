@@ -1,4 +1,3 @@
 .vscode
 .venv
 server/api/__pycache__
-sonar-project.properties

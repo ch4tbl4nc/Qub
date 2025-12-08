@@ -48,23 +48,22 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      # 5. Lancement des tests (Génération du rapport pour Sonar)
-    #   - name: Run Tests with Coverage
-    #     env:
-    #       DB_HOST: 127.0.0.1
-    #       DB_PORT: 3306
-    #       DB_USER: root
-    #       DB_PASSWORD: root
-    #       DB_NAME: tmp_db
-    #     run: |
-    #       # On ignore ui_tests car pas d'écran sur la CI
-    #       pytest --cov=. --cov-report=xml:coverage.xml --ignore=tests/ui_tests
-
-      # 6. Analyse SonarCloud (Votre snippet adapté)
+      # 5. Analyse SonarCloud (Votre snippet adapté)
       # J'utilise l'action officielle "SonarCloud" car vous êtes sur le Cloud.
       # Elle détecte automatiquement coverage.xml généré juste avant.
-      - name: SonarQube Cloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+      # 6. Analyse SonarQube (Version corrigée)
+      - name: SonarQube Scan
+        # On utilise la nouvelle action recommandée par vos logs
+        uses: SonarSource/sonarqube-scan-action@v4
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Nécessaire pour décorer les PR
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # On injecte la configuration ici directement (plus besoin de fichier properties)
+          args: >
+            -Dsonar.organization=ch4tbl4nc
+            -Dsonar.projectKey=ch4tbl4nc_Qub
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/venv/**,**/__pycache__**,**/tests/**
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.python.version=3.10
