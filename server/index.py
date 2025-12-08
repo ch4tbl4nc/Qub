@@ -1,18 +1,16 @@
 
 # Import necessary modules and functions
 from fastapi import FastAPI
-from mysql import connector 
-
-# Connect to the MySQL database
-db_connection = connector.connect(
-    host="localhost",
-    user="yourusername",
-    password="yourpassword",
-)
+from libs.database import run_query
+from api.users import router as users_router
 
 # Create an instance of the FastAPI application
 app = FastAPI()
 
+# Import routers for API 
+app.include_router(users_router, prefix="/users")
+
+# Define a simple root endpoint
 @app.get("/")
 async def root():
     return {"message": "Welcome to the API!"}
