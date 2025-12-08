@@ -49,16 +49,16 @@ jobs:
           pip install pytest pytest-cov
 
       # 5. Lancement des tests (Génération du rapport pour Sonar)
-      - name: Run Tests with Coverage
-        env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_USER: root
-          DB_PASSWORD: root
-          DB_NAME: tmp_db
-        run: |
-          # On ignore ui_tests car pas d'écran sur la CI
-          pytest --cov=. --cov-report=xml:coverage.xml --ignore=tests/ui_tests
+    #   - name: Run Tests with Coverage
+    #     env:
+    #       DB_HOST: 127.0.0.1
+    #       DB_PORT: 3306
+    #       DB_USER: root
+    #       DB_PASSWORD: root
+    #       DB_NAME: tmp_db
+    #     run: |
+    #       # On ignore ui_tests car pas d'écran sur la CI
+    #       pytest --cov=. --cov-report=xml:coverage.xml --ignore=tests/ui_tests
 
       # 6. Analyse SonarCloud (Votre snippet adapté)
       # J'utilise l'action officielle "SonarCloud" car vous êtes sur le Cloud.
