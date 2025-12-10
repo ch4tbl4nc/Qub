@@ -1,6 +1,5 @@
 
 from fastapi import FastAPI
-from server.libs.database.Config import run_query
 from api.users import router as users_router
 
 # Create an instance of the FastAPI application
