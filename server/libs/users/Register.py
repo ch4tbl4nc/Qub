@@ -5,7 +5,6 @@ from libs.database.RunQuery import run_query
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def register_user(username: str, email: str, password: str) -> Dict[str, Any]:
-
     check_q = "SELECT id FROM users WHERE username = %s OR email = %s LIMIT 1"
     if run_query(check_q, (username, email), fetch=True):
         return {"success": False, "error": "Nom d'utilisateur ou email déjà utilisé"}
