@@ -1,6 +1,6 @@
-# Import neccessary modules and functions
+
 from fastapi import APIRouter
-from libs.database import run_query
+from libs.database.RunQuery import run_query
 
 # Create a router instance
 router = APIRouter()

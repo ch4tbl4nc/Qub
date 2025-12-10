@@ -1,16 +1,6 @@
-# database.py
-import mysql.connector
 
-def _db_config():
-    """Configuration de la base de données. !!! POUR DEV SINON UTILISER DES VARIABLES D'ENVIRONNEMENT !!!"""
-    return {
-        'user': 'qubAdmin',
-        'password': '5c8e1c1e7b91ac191454',
-        'host': 'panel.lemecha.fr',
-        'port': 3309,
-        'database': 'qub',
-        'raise_on_warnings': True
-    }
+from libs.database.Config import _db_config
+import mysql.connector
 
 def run_query(query, params=None, fetch=False):
     """
