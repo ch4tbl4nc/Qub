@@ -1,21 +1,26 @@
 from typing import Dict, Any
-from passlib.context import CryptContext
+import bcrypt
 from libs.database.RunQuery import run_query
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 def register_user(username: str, email: str, password: str) -> Dict[str, Any]:
+    """
+    Enregistre un nouvel utilisateur avec mot de passe hashé.
+    """
+    # vérifier doublons
     check_q = "SELECT id FROM users WHERE username = %s OR email = %s LIMIT 1"
     if run_query(check_q, (username, email), fetch=True):
         return {"success": False, "error": "Nom d'utilisateur ou email déjà utilisé"}
     
-    password_hash = pwd_context.hash(password)
+    # hasher le mot de passe (bcrypt génère le salt automatiquement)
+    password_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    password_hash = bcrypt.hashpw(password_bytes, salt)
 
+    # insérer (bcrypt retourne bytes, MySQL accepte)
     insert_q = "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)"
     rowcount = run_query(insert_q, (username, email, password_hash), fetch=False)
 
-
     if not rowcount or rowcount == 0:
-        return {'success': False, 'message': 'Registration failed'}
+        return {'success': False, 'error': 'Erreur lors de l\'inscription'}
     
-    return {'success': True, 'message': 'User registered successfully'}
+    return {'success': True, 'message': 'Utilisateur créé avec succès'}
