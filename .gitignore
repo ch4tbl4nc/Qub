@@ -1,3 +1,4 @@
 .vscode
 .venv
+.env
 server/api/__pycache__

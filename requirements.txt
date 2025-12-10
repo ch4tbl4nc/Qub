@@ -1,2 +1,4 @@
 fastapi[standard]
 mysql-connector-python
+passlib[bcrypt]
+python-dotenv
