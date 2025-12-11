@@ -1,6 +1,6 @@
 
 from fastapi import APIRouter
-from libs.database.RunQuery import run_query
+from libs.csv.Read import read_csv
 
 # Create a router instance
 router = APIRouter()
@@ -10,15 +10,16 @@ router = APIRouter()
 async def root():
     return {"message": "Hello Users !"}
 
-@router.get("/test")
-async def get_all_users():
-    query = "INSERT INTO users (id, username) VALUES (%s, %s)"
-    params = (1, 'testuser')
-
+@router.get("/products/all")
+async def get_all_products():
     try:
-        run_query(query, params)
-        return {"message": "User inserted successfully."}
+        return read_csv("server/data/product.csv")
     except Exception as e:
-        return {"error": str(e)}    
+        return {"error": str(e)}
 
-
+@router.get("/products/edit")
+async def get_product():
+    try:
+        return read_csv("server/data/product.csv")
+    except Exception as e:
+        return {"error": str(e)}
