@@ -2,6 +2,8 @@ from typing import Dict, Any
 import bcrypt
 from libs.database.RunQuery import run_query
 
+
+
 def login_user(username: str, password: str) -> Dict[str, Any]:
     """
     Vérifie les identifiants utilisateur.
