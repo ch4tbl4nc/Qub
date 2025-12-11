@@ -78,7 +78,7 @@ async def login(user: UserLogin):
     return {"access_token": token, "token_type": "bearer"}
 
 @router.post("/totp/enable")
-async def enable_totp(data: TOTPEnable, current_user: dict = Depends(get_current_user)):
+async def enable_totp(data: TOTPEnable):
     """Génère un secret TOTP et retourne le secret + QR code"""
     secret = generate_totp_secret()
     
