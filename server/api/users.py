@@ -1,11 +1,20 @@
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, EmailStr, constr
 from libs.users.Register import register_user
 from libs.users.Login import login_user
+from libs.users.jwt_utils import create_access_token, verify_access_token
 
 # Create a router instance
 router = APIRouter()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    payload = verify_access_token(token)
+    if not payload:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token invalide ou expiré")
+    return payload
 
 class UserRegister(BaseModel):
     username: constr(min_length=6, max_length=25)
@@ -30,20 +39,12 @@ async def register(user: UserRegister):
 
 @router.post("/login")
 async def login(user: UserLogin):
-
     result = login_user(user.username, user.password)
     if not result.get('success'):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=result.get('error'))
-    return {"message": "Authenticated", "user_id": result.get("user_id")}
+    token = create_access_token({"sub": user.username})
+    return {"access_token": token, "token_type": "bearer"}
 
-
-# @router.get("/test")
-# async def get_all_users():
-#     query = "INSERT INTO users (id, username) VALUES (%s, %s)"
-#     params = (1, 'testuser')
-
-#     try:
-#         run_query(query, params)
-#         return {"message": "User inserted successfully."}
-#     except Exception as e:
-#         return {"error": str(e)}    
+@router.get("/me")
+async def read_users_me(current_user: dict = Depends(get_current_user)):
+    return {"user": current_user}
