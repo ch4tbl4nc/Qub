@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, EmailStr, constr
 from libs.users.Register import register_user
 from libs.users.Login import login_user
-from libs.users.jwt_utils import create_access_token, verify_access_token
+from server.libs.jwt.jwt_utils import create_access_token, verify_access_token
 
 # Create a router instance
 router = APIRouter()

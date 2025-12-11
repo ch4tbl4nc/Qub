@@ -10,8 +10,11 @@ JWT_ACCESS_TOKEN_TIMES = 720  # minutes
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=JWT_ACCESS_TOKEN_TIMES)
-    to_encode.update({"exp": expire})
+    expire = datetime.utcnow() + timedelta(minutes=JWT_ACCESS_TOKEN_TIMES)
+    to_encode.update({
+        "exp": expire,
+        "iat": datetime.utcnow()
+    })
     return jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 def verify_access_token(token: str):
