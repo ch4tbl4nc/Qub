@@ -6,11 +6,11 @@ import os
 load_dotenv()
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
-JWT_ACCESS_TOKEN_TIMES = int(os.getenv("JWT_ACCESS_TOKEN_TIMES"))  # minutes
+JWT_ACCESS_TOKEN_TIMES = os.getenv("JWT_ACCESS_TOKEN_TIMES")  # minutes
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=JWT_ACCESS_TOKEN_TIMES))
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=int(JWT_ACCESS_TOKEN_TIMES)))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
