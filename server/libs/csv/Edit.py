@@ -1,9 +1,12 @@
 
-import csv
+import pandas as pd
 
-def read_csv(file_path):
-    """Edit a CSV file and returns its content as a list of dictionaries."""
+def edit_csv(file_path, index, name, data):
+    """Edit a CSV row file and returns its content as a list of dictionaries."""
 
-    with open(file_path, mode='r', newline='', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile)
-        return [row for row in reader]
+    df = pd.read_csv(file_path)
+
+    df.loc[index, name] = data
+    df.to_csv(file_path, index=False)
+        
+    return "Success"
