@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUB - Ajouter un produit</title>
+  <link rel="stylesheet" href="../styles/variables.css">
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/add-product.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1 class="logo">QUB</h1>
+    
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          Statistiques
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="stock.html" class="nav-link">
+          <span class="nav-icon">📦</span>
+          Gestion de Stock
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="add-product.html" class="nav-link active">
+          <span class="nav-icon">➕</span>
+          Ajouter un produit
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="historique.html" class="nav-link">
+          <span class="nav-icon">📋</span>
+          Historique
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="contrats.html" class="nav-link">
+          <span class="nav-icon">📄</span>
+          Contrats
+        </a>
+      </li>
+    </ul>
+    
+    <div class="user-section">
+      <div class="user-info glass-card">
+        <div class="user-avatar">JD</div>
+        <div>
+          <div class="user-name">Jean Dupont</div>
+          <div class="user-role">Administrateur</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Ajouter un produit</h1>
+      <div class="header-actions">
+        <a href="stock.html" class="btn btn-secondary">
+          <span>←</span>
+          Retour au stock
+        </a>
+      </div>
+    </div>
+    
+    <!-- Formulaire d'ajout -->
+    <div class="form-container glass-card">
+      <form id="addProductForm">
+        
+        <!-- Section Informations générales -->
+        <div class="form-section">
+          <h3 class="section-title">📋 Informations générales</h3>
+          
+          <div class="form-row">
+            <div class="input-group">
+              <label class="input-label" for="productRef">
+                ID Référence <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                class="input-field" 
+                id="productRef" 
+                placeholder="Ex: REF-001" 
+                required
+              >
+              <small class="input-help">Identifiant unique du produit</small>
+            </div>
+            
+            <div class="input-group">
+              <label class="input-label" for="productName">
+                Nom du produit <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                class="input-field" 
+                id="productName" 
+                placeholder="Ex: iPhone 15 Pro" 
+                required
+              >
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="input-group">
+              <label class="input-label" for="productCategory">
+                Catégorie <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                class="input-field" 
+                id="productCategory" 
+                placeholder="Ex: Électronique" 
+                required
+              >
+            </div>
+            
+            <div class="input-group">
+              <label class="input-label" for="productSupplier">
+                Fournisseur <span class="required">*</span>
+              </label>
+              <select class="input-field" id="productSupplier" required>
+                <option value="">Sélectionner...</option>
+                <option value="TechCorp">TechCorp</option>
+                <option value="ElectroPlus">ElectroPlus</option>
+                <option value="MegaDistrib">MegaDistrib</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Section Prix et Marge -->
+        <div class="form-section">
+          <h3 class="section-title">💰 Prix et Marge</h3>
+          
+          <div class="form-row">
+            <div class="input-group">
+              <label class="input-label" for="productPurchasePrice">
+                Prix d'achat à l'unité (€) <span class="required">*</span>
+              </label>
+              <input 
+                type="number" 
+                class="input-field" 
+                id="productPurchasePrice" 
+                step="0.01" 
+                min="0" 
+                placeholder="0.00" 
+                required
+              >
+              <small class="input-help">Prix auquel vous achetez le produit</small>
+            </div>
+            
+            <div class="input-group">
+              <label class="input-label" for="productMargin">
+                Marge (%) <span class="required">*</span>
+              </label>
+              <input 
+                type="number" 
+                class="input-field" 
+                id="productMargin" 
+                step="0.1" 
+                min="0" 
+                max="1000" 
+                placeholder="0.0" 
+                required
+              >
+              <small class="input-help">Marge bénéficiaire en pourcentage</small>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="input-group">
+              <label class="input-label" for="productPrice">
+                Prix de vente (€) <span class="required">*</span>
+              </label>
+              <input 
+                type="number" 
+                class="input-field input-calculated" 
+                id="productPrice" 
+                step="0.01" 
+                min="0" 
+                placeholder="0.00" 
+                readonly
+                required
+              >
+              <small class="input-help calculated-help">
+                ✓ Calculé automatiquement
+              </small>
+            </div>
+            
+            <div class="input-group">
+              <div class="calculation-display glass-card">
+                <div class="calc-label">Bénéfice par unité</div>
+                <div class="calc-value" id="profitDisplay">€0.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Section Stock -->
+        <div class="form-section">
+          <h3 class="section-title">📦 Gestion du stock</h3>
+          
+          <div class="form-row">
+            <div class="input-group">
+              <label class="input-label" for="productQuantity">
+                Quantité en stock <span class="required">*</span>
+              </label>
+              <input 
+                type="number" 
+                class="input-field" 
+                id="productQuantity" 
+                min="0" 
+                placeholder="0" 
+                required
+              >
+            </div>
+            
+            <div class="input-group">
+              <label class="input-label" for="productThreshold">
+                Seuil d'alerte stock faible <span class="required">*</span>
+              </label>
+              <input 
+                type="number" 
+                class="input-field" 
+                id="productThreshold" 
+                min="1" 
+                value="10"
+                required
+              >
+              <small class="input-help">Vous serez alerté si le stock descend sous ce seuil</small>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Boutons d'action -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="window.location.href='stock.html'">
+            Annuler
+          </button>
+          <button type="reset" class="btn btn-secondary">
+            Réinitialiser
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <span>✓</span>
+            Ajouter le produit
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Aperçu du produit -->
+    <div class="preview-container glass-card">
+      <h3 class="preview-title">👁️ Aperçu du produit</h3>
+      <div class="preview-content">
+        <div class="preview-item">
+          <span class="preview-label">Référence :</span>
+          <span class="preview-value" id="previewRef">-</span>
+        </div>
+        <div class="preview-item">
+          <span class="preview-label">Nom :</span>
+          <span class="preview-value" id="previewName">-</span>
+        </div>
+        <div class="preview-item">
+          <span class="preview-label">Catégorie :</span>
+          <span class="preview-value" id="previewCategory">-</span>
+        </div>
+        <div class="preview-item">
+          <span class="preview-label">Fournisseur :</span>
+          <span class="preview-value" id="previewSupplier">-</span>
+        </div>
+        <div class="preview-divider"></div>
+        <div class="preview-item">
+          <span class="preview-label">Prix d'achat :</span>
+          <span class="preview-value" id="previewPurchase">€0.00</span>
+        </div>
+        <div class="preview-item">
+          <span class="preview-label">Marge :</span>
+          <span class="preview-value" id="previewMargin">0%</span>
+        </div>
+        <div class="preview-item highlight">
+          <span class="preview-label">Prix de vente :</span>
+          <span class="preview-value" id="previewPrice">€0.00</span>
+        </div>
+        <div class="preview-item">
+          <span class="preview-label">Bénéfice :</span>
+          <span class="preview-value" id="previewProfit">€0.00</span>
+        </div>
+        <div class="preview-divider"></div>
+        <div class="preview-item">
+          <span class="preview-label">Quantité :</span>
+          <span class="preview-value" id="previewQuantity">0</span>
+        </div>
+        <div class="preview-item">
+          <span class="preview-label">Seuil d'alerte :</span>
+          <span class="preview-value" id="previewThreshold">10</span>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script src="../js/add-product.js"></script>
+</body>
+</html>

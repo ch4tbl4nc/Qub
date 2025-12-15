@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUB - Historique</title>
+  <link rel="stylesheet" href="../styles/variables.css">
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/historique.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1 class="logo">QUB</h1>
+    
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          Statistiques
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="stock.html" class="nav-link">
+          <span class="nav-icon">📦</span>
+          Gestion de Stock
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="add-product.html" class="nav-link">
+          <span class="nav-icon">➕</span>
+          Ajouter un produit
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="historique.html" class="nav-link">
+          <span class="nav-icon">📋</span>
+          Historique
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="contrats.html" class="nav-link">
+          <span class="nav-icon">📄</span>
+          Contrats
+        </a>
+      </li>
+    </ul>
+    
+    <div class="user-section">
+      <div class="user-info glass-card">
+        <div class="user-avatar">JD</div>
+        <div>
+          <div class="user-name">Jean Dupont</div>
+          <div class="user-role">Administrateur</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Historique</h1>
+      <div class="header-actions">
+      </div>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="history-tabs glass-card">
+      <button class="history-tab active" data-tab="orders">
+        <span class="tab-icon">🛒</span>
+        Commandes
+      </button>
+      <button class="history-tab" data-tab="products">
+        <span class="tab-icon">📦</span>
+        Produits
+      </button>
+    </div>
+    
+    <!-- Orders History -->
+    <div class="history-content active" id="ordersHistory">
+      <div class="timeline">
+        <!-- Les entrées seront générées par JavaScript -->
+      </div>
+    </div>
+    
+    <!-- Products History -->
+    <div class="history-content" id="productsHistory">
+      <div class="timeline">
+        <!-- Les entrées seront générées par JavaScript -->
+      </div>
+    </div>
+  </main>
+  
+  <!-- Modal Détails Commande -->
+  <div class="modal" id="orderModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="orderModalTitle">Détails de la commande</h2>
+        <button class="modal-close" id="closeOrderModal">✕</button>
+      </div>
+      
+      <div class="modal-body" id="orderModalBody">
+        <!-- Contenu généré par JavaScript -->
+      </div>
+    </div>
+  </div>
+  
+  <script src="../js/historique.js"></script>
+</body>
+</html>
