@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUB - Gestion de Contrats</title>
+  <link rel="stylesheet" href="../styles/variables.css">
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/contrats.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1 class="logo">QUB</h1>
+    
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          Statistiques
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="stock.html" class="nav-link">
+          <span class="nav-icon">📦</span>
+          Gestion de Stock
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="add-product.html" class="nav-link">
+          <span class="nav-icon">➕</span>
+          Ajouter un produit
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="historique.html" class="nav-link">
+          <span class="nav-icon">📋</span>
+          Historique
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="contrats.html" class="nav-link active">
+          <span class="nav-icon">📄</span>
+          Contrats
+        </a>
+      </li>
+    </ul>
+    
+    <div class="user-section">
+      <div class="user-info glass-card">
+        <div class="user-avatar">JD</div>
+        <div>
+          <div class="user-name">Jean Dupont</div>
+          <div class="user-role">Administrateur</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Gestion de Contrats</h1>
+      <div class="header-actions">
+        <button type="button" class="btn btn-primary" id="addContractBtn">
+          <span>➕</span>
+          Nouveau contrat
+        </button>
+      </div>
+    </div>
+    
+    <!-- Stats -->
+    <div class="contract-stats">
+      <div class="stat-card glass-card">
+        <div class="stat-icon">📄</div>
+        <div class="stat-info">
+          <div class="stat-value">24</div>
+          <div class="stat-label">Contrats actifs</div>
+        </div>
+      </div>
+      
+      <div class="stat-card glass-card">
+        <div class="stat-icon">⏰</div>
+        <div class="stat-info">
+          <div class="stat-value">3</div>
+          <div class="stat-label">À renouveler</div>
+        </div>
+      </div>
+      
+      <div class="stat-card glass-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <div class="stat-value">€1.2M</div>
+          <div class="stat-label">Valeur totale</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filters-section glass-card">
+      <div class="filter-group">
+        <input type="text" class="input-field" placeholder="🔍 Rechercher un contrat..." id="searchInput">
+      </div>
+      
+      <div class="filter-group">
+        <select class="input-field" id="statusFilter">
+          <option value="">Tous les statuts</option>
+          <option value="active">Actif</option>
+          <option value="expiring">À renouveler</option>
+          <option value="expired">Expiré</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <select class="input-field" id="sortFilter">
+          <option value="date-desc">Plus récent</option>
+          <option value="date-asc">Plus ancien</option>
+          <option value="value-desc">Valeur décroissante</option>
+          <option value="value-asc">Valeur croissante</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Contracts Grid -->
+    <div class="contracts-grid" id="contractsGrid">
+      <!-- Les contrats seront générés par JavaScript -->
+    </div>
+  </main>
+  
+  <!-- Modal Détails Contrat -->
+  <div class="modal" id="contractModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content glass-card modal-large">
+      <div class="modal-header">
+        <h2 class="modal-title" id="contractModalTitle">Détails du contrat</h2>
+        <button type="button" class="modal-close" id="closeContractModal">✕</button>
+      </div>
+      
+      <div class="modal-body" id="contractModalBody">
+        <!-- Contenu généré par JavaScript -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Ajouter Contrat -->
+  <div class="modal" id="addContractModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content glass-card modal-large">
+      <div class="modal-header">
+        <h2 class="modal-title">Nouveau contrat</h2>
+        <button type="button" class="modal-close" id="closeAddContractModal">✕</button>
+      </div>
+      
+      <div class="modal-body">
+        <form id="addContractForm">
+          <div class="input-group">
+            <label class="input-label">Numéro de contrat *</label>
+            <input type="text" class="input-field" id="newContractId" placeholder="CNT-2025-001" required>
+          </div>
+          
+          <div class="input-group">
+            <label class="input-label">Fournisseur *</label>
+            <input type="text" class="input-field" id="newContractSupplier" placeholder="TechCorp" required>
+          </div>
+          
+          <div class="input-group">
+            <label class="input-label">Date de début *</label>
+            <input type="date" class="input-field" id="newContractStartDate" required>
+          </div>
+          
+          <div class="input-group">
+            <label class="input-label">Durée (mois) *</label>
+            <input type="number" class="input-field" id="newContractDuration" placeholder="12" min="1" required>
+          </div>
+          
+          <div class="input-group">
+            <label class="input-label">Statut *</label>
+            <select class="input-field" id="newContractStatus" required>
+              <option value="active">Actif</option>
+              <option value="expiring">À renouveler</option>
+              <option value="expired">Expiré</option>
+            </select>
+          </div>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="cancelAddContractBtn">Annuler</button>
+            <button type="submit" class="btn btn-primary">✓ Créer le contrat</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <script src="../js/contrats.js"></script>
+</body>
+</html>

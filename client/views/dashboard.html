@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUB - Dashboard</title>
+  <link rel="stylesheet" href="../styles/variables.css">
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/dashboard.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1 class="logo">QUB</h1>
+    
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          Statistiques
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="stock.html" class="nav-link">
+          <span class="nav-icon">📦</span>
+          Gestion de Stock
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="add-product.html" class="nav-link">
+          <span class="nav-icon">➕</span>
+          Ajouter un produit
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="historique.html" class="nav-link">
+          <span class="nav-icon">📋</span>
+          Historique
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="contrats.html" class="nav-link">
+          <span class="nav-icon">📄</span>
+          Contrats
+        </a>
+      </li>
+    </ul>
+    
+    <div class="user-section">
+      <div class="user-info glass-card">
+        <div class="user-avatar">JD</div>
+        <div>
+          <div class="user-name">Jean Dupont</div>
+          <div class="user-role">Administrateur</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Statistiques</h1>
+      <div class="header-actions">
+      </div>
+    </div>
+    
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card glass-card">
+        <div class="kpi-icon success">💰</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Chiffre d'affaires</div>
+          <div class="kpi-value">€45,231</div>
+        </div>
+      </div>
+      
+      <div class="kpi-card glass-card">
+        <div class="kpi-icon info">📈</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Ventes totales</div>
+          <div class="kpi-value">1,234</div>
+        </div>
+      </div>
+      
+      <div class="kpi-card glass-card">
+        <div class="kpi-icon warning">📦</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Produits en stock</div>
+          <div class="kpi-value">2,456</div>
+        </div>
+      </div>
+      
+      <div class="kpi-card glass-card">
+        <div class="kpi-icon primary">👥</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Fournisseurs actifs</div>
+          <div class="kpi-value">24</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Charts Row 1 -->
+    <div class="charts-grid">
+      <!-- Pie Chart - Répartition Fournisseurs -->
+      <div class="chart-card glass-card">
+        <div class="chart-header">
+          <h3 class="chart-title">Répartition par fournisseur</h3>
+        </div>
+        <div class="chart-container">
+          <canvas id="supplierChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Top/Flop Ventes -->
+      <div class="chart-card glass-card">
+        <div class="chart-header">
+          <h3 class="chart-title">Top & Flop Ventes</h3>
+        </div>
+        <div class="sales-lists">
+          <div class="sales-section">
+            <h4 class="sales-subtitle">🏆 Top 3</h4>
+            <div class="sales-list">
+              <div class="sales-item">
+                <span class="sales-rank">1</span>
+                <span class="sales-name">iPhone 15 Pro</span>
+                <span class="sales-value">€45,920</span>
+              </div>
+              <div class="sales-item">
+                <span class="sales-rank">2</span>
+                <span class="sales-name">MacBook Air M2</span>
+                <span class="sales-value">€38,450</span>
+              </div>
+              <div class="sales-item">
+                <span class="sales-rank">3</span>
+                <span class="sales-name">iPad Pro 12.9"</span>
+                <span class="sales-value">€29,180</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="sales-section">
+            <h4 class="sales-subtitle">📉 Flop 3</h4>
+            <div class="sales-list">
+              <div class="sales-item flop">
+                <span class="sales-rank">1</span>
+                <span class="sales-name">Apple Watch SE</span>
+                <span class="sales-value">€2,340</span>
+              </div>
+              <div class="sales-item flop">
+                <span class="sales-rank">2</span>
+                <span class="sales-name">AirTag Pack</span>
+                <span class="sales-value">€1,890</span>
+              </div>
+              <div class="sales-item flop">
+                <span class="sales-rank">3</span>
+                <span class="sales-name">Magic Keyboard</span>
+                <span class="sales-value">€1,560</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Charts Row 2 -->
+    <div class="charts-grid-full">
+      <!-- Revenus par catégorie -->
+      <div class="chart-card glass-card">
+        <div class="chart-header">
+          <h3 class="chart-title">Revenus par catégorie de produit</h3>
+          <div class="chart-legend" id="categoryLegend"></div>
+        </div>
+        <div class="chart-container">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Revenus par fournisseur -->
+      <div class="chart-card glass-card">
+        <div class="chart-header">
+          <h3 class="chart-title">Revenus par fournisseur</h3>
+          <div class="chart-legend" id="supplierLegend"></div>
+        </div>
+        <div class="chart-container">
+          <canvas id="supplierRevenueChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Action -->
+    <div class="action-bar glass-card">
+      <h3>Actions rapides</h3>
+      <div class="action-buttons">
+        <a href="historique.html" class="btn btn-primary">
+          <span>📋</span>
+          Voir l'historique complet
+        </a>
+        <a href="stock.html" class="btn btn-secondary">
+          <span>📦</span>
+          Gérer le stock
+        </a>
+        <a href="contrats.html" class="btn btn-secondary">
+          <span>📄</span>
+          Voir les contrats
+        </a>
+      </div>
+    </div>
+  </main>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="../js/dashboard.js"></script>
+</body>
+</html>

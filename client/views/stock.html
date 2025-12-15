@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUB - Gestion de Stock</title>
+  <link rel="stylesheet" href="../styles/variables.css">
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/stock.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1 class="logo">QUB</h1>
+    
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          Statistiques
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="stock.html" class="nav-link">
+          <span class="nav-icon">📦</span>
+          Gestion de Stock
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="add-product.html" class="nav-link">
+          <span class="nav-icon">➕</span>
+          Ajouter un produit
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="historique.html" class="nav-link">
+          <span class="nav-icon">📋</span>
+          Historique
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="contrats.html" class="nav-link">
+          <span class="nav-icon">📄</span>
+          Contrats
+        </a>
+      </li>
+    </ul>
+    
+    <div class="user-section">
+      <div class="user-info glass-card">
+        <div class="user-avatar">JD</div>
+        <div>
+          <div class="user-name">Jean Dupont</div>
+          <div class="user-role">Administrateur</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Gestion de Stock</h1>
+      <div class="header-actions">
+      </div>
+    </div>
+    
+    <!-- Alerts -->
+    <div class="alerts-container">
+      <div class="alert alert-warning glass-card">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-content">
+          <strong>3 produits</strong> ont un stock faible et nécessitent un réapprovisionnement
+        </div>
+        <button class="alert-close">✕</button>
+      </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="stock-stats">
+      <div class="stat-card glass-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info">
+          <div class="stat-value">2,456</div>
+          <div class="stat-label">Produits en stock</div>
+        </div>
+      </div>
+      
+      <div class="stat-card glass-card">
+        <div class="stat-icon">⚠️</div>
+        <div class="stat-info">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Stock faible</div>
+        </div>
+      </div>
+      
+      <div class="stat-card glass-card">
+        <div class="stat-icon">🏷️</div>
+        <div class="stat-info">
+          <div class="stat-value">45</div>
+          <div class="stat-label">Catégories</div>
+        </div>
+      </div>
+      
+      <div class="stat-card glass-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <div class="stat-value">€425k</div>
+          <div class="stat-label">Valeur totale</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filters-section glass-card">
+      <div class="filter-group">
+        <input type="text" class="input-field" placeholder="🔍 Rechercher un produit..." id="searchInput">
+      </div>
+      
+      <div class="filter-group">
+        <select class="input-field" id="categoryFilter">
+          <option value="">Toutes les catégories</option>
+          <option value="electronique">Électronique</option>
+          <option value="informatique">Informatique</option>
+          <option value="accessoires">Accessoires</option>
+          <option value="audio">Audio</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <select class="input-field" id="supplierFilter">
+          <option value="">Tous les fournisseurs</option>
+          <option value="techcorp">TechCorp</option>
+          <option value="electroplus">ElectroPlus</option>
+          <option value="megadistrib">MegaDistrib</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <select class="input-field" id="stockFilter">
+          <option value="">Tous les stocks</option>
+          <option value="low">Stock faible</option>
+          <option value="medium">Stock moyen</option>
+          <option value="high">Stock élevé</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Stock Table -->
+    <div class="table-container glass-card">
+      <table class="stock-table">
+        <thead>
+          <tr>
+            <th>ID Référence</th>
+            <th>Nom du produit</th>
+            <th>Catégorie</th>
+            <th>Prix</th>
+            <th>Quantité</th>
+            <th>Fournisseur</th>
+            <th>État</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="stockTableBody">
+          <!-- Les lignes seront générées par JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+  
+  <!-- Modal Ajout/Modification Produit -->
+  <div class="modal" id="productModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">Ajouter un produit</h2>
+        <button class="modal-close" id="closeModal">✕</button>
+      </div>
+      
+      <form class="modal-body" id="productForm">
+        <div class="form-row">
+          <div class="input-group">
+            <label class="input-label">Nom du produit</label>
+            <input type="text" class="input-field" id="productName" required>
+          </div>
+          
+          <div class="input-group">
+            <label class="input-label">ID Référence</label>
+            <input type="text" class="input-field" id="productRef" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="input-group">
+            <label class="input-label">Catégorie</label>
+            <input type="text" class="input-field" id="productCategory" required>
+          </div>
+          
+          <div class="input-group">
+            <label class="input-label">Fournisseur</label>
+            <select class="input-field" id="productSupplier" required>
+              <option value="">Sélectionner...</option>
+              <option value="techcorp">TechCorp</option>
+              <option value="electroplus">ElectroPlus</option>
+              <option value="megadistrib">MegaDistrib</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="input-group">
+            <label class="input-label">Prix (€)</label>
+            <input type="number" class="input-field" id="productPrice" step="0.01" required>
+          </div>
+          
+          <div class="input-group">
+            <label class="input-label">Quantité</label>
+            <input type="number" class="input-field" id="productQuantity" required>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label class="input-label">Seuil d'alerte stock faible</label>
+          <input type="number" class="input-field" id="productThreshold" value="10">
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="../js/stock.js"></script>
+</body>
+</html>
