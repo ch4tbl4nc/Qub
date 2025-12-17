@@ -6,3 +6,4 @@ PyJWT
 pyotp
 qrcode
 pandas
+webview
