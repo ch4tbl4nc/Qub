@@ -15,55 +15,59 @@ const chartColors = {
 // Diagramme camembert - Répartition fournisseurs
 const supplierChartCtx = document.getElementById('supplierChart');
 if (supplierChartCtx) {
-  new Chart(supplierChartCtx, {
-    type: 'doughnut',
-    data: {
-      labels: ['TechCorp', 'ElectroPlus', 'MegaDistrib', 'GlobalSupply', 'Autres'],
-      datasets: [{
-        data: [30, 25, 20, 15, 10],
-        backgroundColor: [
-          chartColors.primary,
-          chartColors.secondary,
-          chartColors.success,
-          chartColors.warning,
-          chartColors.info
-        ],
-        borderWidth: 0,
-        hoverOffset: 10
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            color: '#cbd5e1',
-            padding: 15,
-            font: {
-              size: 12,
-              family: "'Inter', sans-serif"
+  try {
+    new Chart(supplierChartCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['TechCorp', 'ElectroPlus', 'MegaDistrib', 'GlobalSupply', 'Autres'],
+        datasets: [{
+          data: [30, 25, 20, 15, 10],
+          backgroundColor: [
+            chartColors.primary,
+            chartColors.secondary,
+            chartColors.success,
+            chartColors.warning,
+            chartColors.info
+          ],
+          borderWidth: 0,
+          hoverOffset: 10
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#cbd5e1',
+              padding: 15,
+              font: {
+                size: 12,
+                family: "'Inter', sans-serif"
+              }
             }
-          }
-        },
-        tooltip: {
-          backgroundColor: 'rgba(15, 23, 42, 0.9)',
-          titleColor: '#f1f5f9',
-          bodyColor: '#cbd5e1',
-          borderColor: 'rgba(255, 255, 255, 0.1)',
-          borderWidth: 1,
-          padding: 12,
-          displayColors: true,
-          callbacks: {
-            label: function(context) {
-              return context.label + ': ' + context.parsed + '%';
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            titleColor: '#f1f5f9',
+            bodyColor: '#cbd5e1',
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: true,
+            callbacks: {
+              label: function (context) {
+                return context.label + ': ' + context.parsed + '%';
+              }
             }
           }
         }
       }
-    }
-  });
+    });
+  } catch (error) {
+    console.error('Erreur lors de la création du graphique des fournisseurs :', error);
+  }
 }
 
 // Graphique revenus par catégorie
@@ -131,7 +135,7 @@ if (categoryChartCtx) {
           borderWidth: 1,
           padding: 12,
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               return context.dataset.label + ': €' + context.parsed.y.toLocaleString();
             }
           }
@@ -145,7 +149,7 @@ if (categoryChartCtx) {
           },
           ticks: {
             color: '#94a3b8',
-            callback: function(value) {
+            callback: function (value) {
               return '€' + (value / 1000) + 'k';
             }
           }
@@ -227,7 +231,7 @@ if (supplierRevenueChartCtx) {
           borderWidth: 1,
           padding: 12,
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               return context.dataset.label + ': €' + context.parsed.y.toLocaleString();
             }
           }
@@ -241,7 +245,7 @@ if (supplierRevenueChartCtx) {
           },
           ticks: {
             color: '#94a3b8',
-            callback: function(value) {
+            callback: function (value) {
               return '€' + (value / 1000) + 'k';
             }
           }
