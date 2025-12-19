@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Fonction de calcul du prix de vente
   function calculateSalePrice() {
-    const purchasePrice = parseFloat(purchasePriceInput.value) || 0;
-    const margin = parseFloat(marginInput.value) || 0;
+    const purchasePrice = Number.parseFloat(purchasePriceInput.value) || 0;
+    const margin = Number.parseFloat(marginInput.value) || 0;
     
     // Formule : Prix de vente = Prix d'achat × (1 + Marge/100)
     const salePrice = purchasePrice * (1 + margin / 100);
@@ -85,11 +85,11 @@ document.addEventListener('DOMContentLoaded', function() {
       name: document.getElementById('productName').value.trim(),
       category: document.getElementById('productCategory').value.trim(),
       supplier: document.getElementById('productSupplier').value,
-      purchasePrice: parseFloat(document.getElementById('productPurchasePrice').value),
-      margin: parseFloat(document.getElementById('productMargin').value),
-      price: parseFloat(document.getElementById('productPrice').value),
-      quantity: parseInt(document.getElementById('productQuantity').value),
-      threshold: parseInt(document.getElementById('productThreshold').value)
+      purchasePrice: Number.parseFloat(document.getElementById('productPurchasePrice').value),
+      margin: Number.parseFloat(document.getElementById('productMargin').value),
+      price: Number.parseFloat(document.getElementById('productPrice').value),
+      quantity: Number.parseInt(document.getElementById('productQuantity').value),
+      threshold: Number.parseInt(document.getElementById('productThreshold').value)
     };
     
     // Validation
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Rediriger vers la page de stock après 2 secondes
     setTimeout(() => {
-      window.location.href = 'stock.html';
+      globalThis.location.href = 'stock.html';
     }, 2000);
   });
   
@@ -131,8 +131,15 @@ document.addEventListener('DOMContentLoaded', function() {
     notification.style.minWidth = '300px';
     notification.style.animation = 'slideIn 0.3s ease-out';
     
-    const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    
+    let icon; 
+    if (type === 'success') {
+      icon = '✓';
+    } else if (type === 'error') {
+      icon = '✕';
+    } else {
+      icon = 'ℹ';
+    }
+
     notification.innerHTML = `
       <span class="alert-icon">${icon}</span>
       <div class="alert-content">${message}</div>

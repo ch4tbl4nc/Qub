@@ -16,7 +16,7 @@ def run_query(query, params=None, fetch=False):
         connection = mysql.connector.connect(**config)
         
         # Preparation (Security)
-        cursor = connection.cursor(prepared=True)
+        cursor = connection.cursor()
         cursor.execute(query, params)
 
         # Result handling
