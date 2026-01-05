@@ -2,7 +2,7 @@ from typing import Dict, Any
 import bcrypt
 from libs.database.RunQuery import run_query
 
-def register_user(username: str, email: str, password: str) -> Dict[str, Any]:
+def register_user(username: str, company: str, email: str, password: str) -> Dict[str, Any]:
     """
     Enregistre un nouvel utilisateur avec mot de passe hashé.
     """
@@ -17,8 +17,8 @@ def register_user(username: str, email: str, password: str) -> Dict[str, Any]:
     password_hash = bcrypt.hashpw(password_bytes, salt)
 
     # insérer (bcrypt retourne bytes, MySQL accepte)
-    insert_q = "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)"
-    rowcount = run_query(insert_q, (username, email, password_hash), fetch=False)
+    insert_q = "INSERT INTO users (username, company, email, password_hash) VALUES (%s, %s, %s, %s)"
+    rowcount = run_query(insert_q, (username, company, email, password_hash), fetch=False)
 
     if not rowcount or rowcount == 0:
         return {'success': False, 'error': 'Erreur lors de l\'inscription'}

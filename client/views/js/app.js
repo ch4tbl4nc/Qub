@@ -30,19 +30,58 @@ document.addEventListener('DOMContentLoaded', () => {
   // Gestion de la soumission du formulaire d'inscription
   const registerForm = document.getElementById('register-form');
   if (registerForm) {
-    registerForm.addEventListener('submit', (e) => {
+    registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const password = document.getElementById('register-password').value;
-      const confirm = document.getElementById('register-confirm').value;
 
-      if (password !== confirm) {
-        alert('Les mots de passe ne correspondent pas!');
+      // 2. Récupérer les valeurs des inputs
+      const name = document.getElementById('register-name').value;
+      const company = document.getElementById('register-company').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      const confirmPassword = document.getElementById('register-confirm').value;
+
+      // 3. Petite vérification de sécurité côté client
+      if (password !== confirmPassword) {
+        alert("Les mots de passe ne correspondent pas !");
         return;
       }
 
-      // Simulation - Redirection vers dashboard
-      window.location.href = 'dashboard.html';
-    });
+      // 4. Préparer l'objet JSON
+      const data = {
+        username: name,
+        company: company,
+        email: email,
+        password: password
+      };
+
+      try {
+        // 5. Envoyer la requête POST
+        const response = await fetch('http://127.0.0.1:8000/users/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        // 6. Gérer la réponse du serveur
+        if (response.ok) {
+          console.log('Succès:', result);
+          alert('Compte créé avec succès !');
+        } else {
+          console.error('Erreur serveur:', result);
+          alert('Erreur lors de l\'inscription: ' + (result.detail || 'Erreur inconnue'));
+        }
+      } catch (error) {
+        console.error('Erreur de connexion:', error);
+        alert('Impossible de contacter le serveur backend.');
+      }
+
+    }
+
+    )
   }
 
   // Gestion du menu mobile

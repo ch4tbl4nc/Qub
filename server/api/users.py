@@ -19,6 +19,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 class UserRegister(BaseModel):
     username: constr(min_length=6, max_length=25)
+    company: constr(min_length=6, max_length=25)
     email: EmailStr
     password: constr(min_length=14)
 
@@ -45,7 +46,7 @@ async def read_users_me(current_user: dict = Depends(get_current_user)):
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: UserRegister):
     """Inscription d'un nouvel utilisateur"""
-    result = register_user(user.username, user.email, user.password)
+    result = register_user(user.username, user.company, user.email, user.password)
     if not result.get('success'):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.get('error'))
     return {"message": result.get('message')}
