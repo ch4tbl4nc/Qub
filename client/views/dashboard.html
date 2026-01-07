@@ -48,10 +48,10 @@
     
     <div class="user-section">
       <div class="user-info glass-card">
-        <div class="user-avatar">JD</div>
+        <div class="user-avatar" id="userAvatar">--</div>
         <div>
-          <div class="user-name">Jean Dupont</div>
-          <div class="user-role">Administrateur</div>
+          <div class="user-name" id="userName">Chargement...</div>
+          <div class="user-role" id="userRole">--</div>
         </div>
       </div>
     </div>
@@ -208,7 +208,13 @@
     </div>
   </main>
   
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Protéger la page - rediriger vers login si non connecté
+    Auth.protectPage();
+  </script>
+  <script src="js/chart.min.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 </html>

@@ -48,10 +48,10 @@
     
     <div class="user-section">
       <div class="user-info glass-card">
-        <div class="user-avatar">JD</div>
+        <div class="user-avatar" id="userAvatar">--</div>
         <div>
-          <div class="user-name">Jean Dupont</div>
-          <div class="user-role">Administrateur</div>
+          <div class="user-name" id="userName">Chargement...</div>
+          <div class="user-role" id="userRole">--</div>
         </div>
       </div>
     </div>
@@ -67,13 +67,7 @@
     
     <!-- Alerts -->
     <div class="alerts-container">
-      <div class="alert alert-warning glass-card">
-        <span class="alert-icon">⚠️</span>
-        <div class="alert-content">
-          <strong>3 produits</strong> ont un stock faible et nécessitent un réapprovisionnement
-        </div>
-        <button class="alert-close">✕</button>
-      </div>
+      <!-- L'alerte sera ajoutée dynamiquement si nécessaire -->
     </div>
     
     <!-- Stats Cards -->
@@ -81,7 +75,7 @@
       <div class="stat-card glass-card">
         <div class="stat-icon">📦</div>
         <div class="stat-info">
-          <div class="stat-value">2,456</div>
+          <div class="stat-value" id="stockTotal">--</div>
           <div class="stat-label">Produits en stock</div>
         </div>
       </div>
@@ -89,7 +83,7 @@
       <div class="stat-card glass-card">
         <div class="stat-icon">⚠️</div>
         <div class="stat-info">
-          <div class="stat-value">3</div>
+          <div class="stat-value" id="stockLow">--</div>
           <div class="stat-label">Stock faible</div>
         </div>
       </div>
@@ -97,7 +91,7 @@
       <div class="stat-card glass-card">
         <div class="stat-icon">🏷️</div>
         <div class="stat-info">
-          <div class="stat-value">45</div>
+          <div class="stat-value" id="stockCategories">--</div>
           <div class="stat-label">Catégories</div>
         </div>
       </div>
@@ -105,7 +99,7 @@
       <div class="stat-card glass-card">
         <div class="stat-icon">💰</div>
         <div class="stat-info">
-          <div class="stat-value">€425k</div>
+          <div class="stat-value" id="stockValue">--</div>
           <div class="stat-label">Valeur totale</div>
         </div>
       </div>
@@ -231,6 +225,10 @@
       </form>
     </div>
   </div>
-  <script src="js/stock.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/auth.js"></script>
+  <script>Auth.protectPage();</script>
+  <script src="js/user-info.js"></script>
+  <script src="js/stock-new.js"></script>
 </body>
 </html>

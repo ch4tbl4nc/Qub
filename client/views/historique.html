@@ -48,10 +48,10 @@
     
     <div class="user-section">
       <div class="user-info glass-card">
-        <div class="user-avatar">JD</div>
+        <div class="user-avatar" id="userAvatar">--</div>
         <div>
-          <div class="user-name">Jean Dupont</div>
-          <div class="user-role">Administrateur</div>
+          <div class="user-name" id="userName">Chargement...</div>
+          <div class="user-role" id="userRole">--</div>
         </div>
       </div>
     </div>
@@ -107,6 +107,10 @@
     </div>
   </div>
   
-  <script src="js/historique.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/auth.js"></script>
+  <script>Auth.protectPage();</script>
+  <script src="js/user-info.js"></script>
+  <script src="js/historique-new.js"></script>
 </body>
 </html>

@@ -233,17 +233,20 @@ function attachTableEventListeners() {
   
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
-        const row = e.target.closest('tr');
-        const productId = row.dataset.id;
-        const index = stockData.findIndex(p => p.id === productId);
-        
-        if (index >= 0) {
-          stockData.splice(index, 1);
-          applyFilters();
-          showNotification('Produit supprimé avec succès!', 'success');
+      confirmDialog(
+        'Êtes-vous sûr de vouloir supprimer ce produit ?',
+        () => {
+          const row = e.target.closest('tr');
+          const productId = row.dataset.id;
+          const index = stockData.findIndex(p => p.id === productId);
+          
+          if (index >= 0) {
+            stockData.splice(index, 1);
+            applyFilters();
+            notify.success('Produit supprimé avec succès!');
+          }
         }
-      }
+      );
     });
   });
 }

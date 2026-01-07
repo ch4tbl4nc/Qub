@@ -12,16 +12,136 @@ const chartColors = {
   orange: '#f97316'
 };
 
-// Diagramme camembert - Répartition fournisseurs
-const supplierChartCtx = document.getElementById('supplierChart');
-if (supplierChartCtx) {
+const API_URL = 'http://127.0.0.1:8000';
+let charts = {}; // Stocker les instances de graphiques
+
+// Charger les informations de l'utilisateur connecté
+async function loadUserInfo() {
   try {
-    new Chart(supplierChartCtx, {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.log('Pas de token, connexion requise');
+      return;
+    }
+
+    const response = await fetch(`${API_URL}/users/me`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const user = data.user;
+      
+      // Mettre à jour l'avatar (initiales)
+      const initials = user.username.substring(0, 2).toUpperCase();
+      document.getElementById('userAvatar').textContent = initials;
+      
+      // Mettre à jour le nom
+      document.getElementById('userName').textContent = user.username;
+      
+      // Mettre à jour le rôle avec traduction
+      const roleMap = {
+        'employe': 'Employé',
+        'manager': 'Manager',
+        'directeur': 'Directeur'
+      };
+      document.getElementById('userRole').textContent = roleMap[user.role] || user.role;
+    } else {
+      console.error('Erreur lors du chargement des infos utilisateur:', response.status);
+      // Valeurs par défaut
+      document.getElementById('userAvatar').textContent = '??';
+      document.getElementById('userName').textContent = 'Utilisateur';
+      document.getElementById('userRole').textContent = 'Employé';
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement des infos utilisateur:', error);
+    // Valeurs par défaut
+    document.getElementById('userAvatar').textContent = '??';
+    document.getElementById('userName').textContent = 'Utilisateur';
+    document.getElementById('userRole').textContent = 'Employé';
+  }
+}
+
+// Charger les données du dashboard
+async function loadDashboardData() {
+  try {
+    const response = await fetch(`${API_URL}/dashboard/stats`);
+    const data = await response.json();
+    
+    // Mettre à jour les KPIs
+    updateKPIs(data.kpis);
+    
+    // Mettre à jour les graphiques
+    createSupplierChart(data.supplier_distribution);
+    createCategoryChart(data.category_revenue);
+    createSupplierRevenueChart(data.supplier_distribution);
+    
+    // Mettre à jour les listes top/flop
+    updateTopFlopLists(data.top_products, data.flop_products);
+    
+  } catch (error) {
+    console.error('Erreur lors du chargement des données:', error);
+  }
+}
+
+// Mettre à jour les KPIs
+function updateKPIs(kpis) {
+  const kpiValues = document.querySelectorAll('.kpi-value');
+  if (kpiValues[0]) kpiValues[0].textContent = `€${kpis.revenue.toLocaleString('fr-FR', {minimumFractionDigits: 0})}`;
+  if (kpiValues[1]) kpiValues[1].textContent = kpis.sales.toLocaleString('fr-FR');
+  if (kpiValues[2]) kpiValues[2].textContent = kpis.stock.toLocaleString('fr-FR');
+  if (kpiValues[3]) kpiValues[3].textContent = kpis.suppliers;
+}
+
+// Mettre à jour les listes top/flop
+function updateTopFlopLists(topProducts, flopProducts) {
+  // Top 3
+  const topList = document.querySelector('.sales-section:first-child .sales-list');
+  if (topList && topProducts) {
+    topList.innerHTML = topProducts.map((product, index) => `
+      <div class="sales-item">
+        <span class="sales-rank">${index + 1}</span>
+        <span class="sales-name">${product.name}</span>
+        <span class="sales-value">€${product.revenue.toLocaleString('fr-FR', {minimumFractionDigits: 0})}</span>
+      </div>
+    `).join('');
+  }
+  
+  // Flop 3
+  const flopList = document.querySelector('.sales-section:last-child .sales-list');
+  if (flopList && flopProducts) {
+    flopList.innerHTML = flopProducts.map((product, index) => `
+      <div class="sales-item flop">
+        <span class="sales-rank">${index + 1}</span>
+        <span class="sales-name">${product.name}</span>
+        <span class="sales-value">€${product.revenue.toLocaleString('fr-FR', {minimumFractionDigits: 0})}</span>
+      </div>
+    `).join('');
+  }
+}
+
+// Diagramme camembert - Répartition fournisseurs
+function createSupplierChart(suppliers) {
+  const supplierChartCtx = document.getElementById('supplierChart');
+  if (!supplierChartCtx || !suppliers) return;
+  
+  // Détruire l'instance existante si elle existe
+  if (charts.supplierChart) {
+    charts.supplierChart.destroy();
+  }
+  
+  const labels = suppliers.map(s => s.name);
+  const data = suppliers.map(s => s.total_revenue);
+  
+  try {
+    charts.supplierChart = new Chart(supplierChartCtx, {
       type: 'doughnut',
       data: {
-        labels: ['TechCorp', 'ElectroPlus', 'MegaDistrib', 'GlobalSupply', 'Autres'],
+        labels: labels,
         datasets: [{
-          data: [30, 25, 20, 15, 10],
+          data: data,
           backgroundColor: [
             chartColors.primary,
             chartColors.secondary,
@@ -70,59 +190,36 @@ if (supplierChartCtx) {
   }
 }
 
-// Graphique revenus par catégorie
-const categoryChartCtx = document.getElementById('categoryChart');
-if (categoryChartCtx) {
-  const categoryChart = new Chart(categoryChartCtx, {
+// Graphique revenus par catégorie - sera créé dynamiquement par createCategoryChart()
+function createCategoryChart(categories) {
+  const categoryChartCtx = document.getElementById('categoryChart');
+  if (!categoryChartCtx || !categories) return;
+  
+  // Détruire l'instance existante si elle existe
+  if (charts.categoryChart) {
+    charts.categoryChart.destroy();
+  }
+  
+  const labels = categories.map(c => c.category);
+  const data = categories.map(c => c.revenue);
+  
+  // Couleurs pour chaque catégorie
+  const colors = [chartColors.primary, chartColors.success, chartColors.warning, chartColors.purple, chartColors.teal, chartColors.orange];
+  
+  charts.categoryChart = new Chart(categoryChartCtx, {
     type: 'line',
     data: {
-      labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
-      datasets: [
-        {
-          label: 'Électronique',
-          data: [12000, 15000, 13000, 17000, 16000, 19000],
-          borderColor: chartColors.primary,
-          backgroundColor: chartColors.primary + '20',
-          tension: 0.4,
-          fill: true,
-          hidden: false
-        },
-        {
-          label: 'Informatique',
-          data: [8000, 9000, 11000, 10000, 12000, 14000],
-          borderColor: chartColors.success,
-          backgroundColor: chartColors.success + '20',
-          tension: 0.4,
-          fill: true,
-          hidden: false
-        },
-        {
-          label: 'Accessoires',
-          data: [3000, 4000, 3500, 4500, 5000, 5500],
-          borderColor: chartColors.warning,
-          backgroundColor: chartColors.warning + '20',
-          tension: 0.4,
-          fill: true,
-          hidden: false
-        },
-        {
-          label: 'Audio',
-          data: [5000, 5500, 6000, 5800, 6500, 7000],
-          borderColor: chartColors.purple,
-          backgroundColor: chartColors.purple + '20',
-          tension: 0.4,
-          fill: true,
-          hidden: false
-        }
-      ]
+      labels: labels,
+      datasets: [{
+        label: 'Revenus',
+        data: data,
+        backgroundColor: colors.slice(0, labels.length),
+        borderRadius: 8
+      }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: {
-        intersect: false,
-        mode: 'index'
-      },
       plugins: {
         legend: {
           display: false
@@ -136,7 +233,7 @@ if (categoryChartCtx) {
           padding: 12,
           callbacks: {
             label: function (context) {
-              return context.dataset.label + ': €' + context.parsed.y.toLocaleString();
+              return 'Revenus: €' + context.parsed.y.toLocaleString('fr-FR');
             }
           }
         }
@@ -165,105 +262,6 @@ if (categoryChartCtx) {
       }
     }
   });
-
-  // Créer la légende interactive
-  createInteractiveLegend('categoryLegend', categoryChart);
-}
-
-// Graphique revenus par fournisseur
-const supplierRevenueChartCtx = document.getElementById('supplierRevenueChart');
-if (supplierRevenueChartCtx) {
-  const supplierRevenueChart = new Chart(supplierRevenueChartCtx, {
-    type: 'line',
-    data: {
-      labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
-      datasets: [
-        {
-          label: 'TechCorp',
-          data: [15000, 18000, 16000, 20000, 19000, 22000],
-          borderColor: chartColors.primary,
-          backgroundColor: chartColors.primary + '20',
-          tension: 0.4,
-          fill: true
-        },
-        {
-          label: 'ElectroPlus',
-          data: [12000, 14000, 13000, 15000, 16000, 18000],
-          borderColor: chartColors.success,
-          backgroundColor: chartColors.success + '20',
-          tension: 0.4,
-          fill: true
-        },
-        {
-          label: 'MegaDistrib',
-          data: [8000, 9000, 10000, 9500, 11000, 12000],
-          borderColor: chartColors.warning,
-          backgroundColor: chartColors.warning + '20',
-          tension: 0.4,
-          fill: true
-        },
-        {
-          label: 'GlobalSupply',
-          data: [6000, 7000, 7500, 8000, 8500, 9000],
-          borderColor: chartColors.info,
-          backgroundColor: chartColors.info + '20',
-          tension: 0.4,
-          fill: true
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        intersect: false,
-        mode: 'index'
-      },
-      plugins: {
-        legend: {
-          display: false
-        },
-        tooltip: {
-          backgroundColor: 'rgba(15, 23, 42, 0.9)',
-          titleColor: '#f1f5f9',
-          bodyColor: '#cbd5e1',
-          borderColor: 'rgba(255, 255, 255, 0.1)',
-          borderWidth: 1,
-          padding: 12,
-          callbacks: {
-            label: function (context) {
-              return context.dataset.label + ': €' + context.parsed.y.toLocaleString();
-            }
-          }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          grid: {
-            color: 'rgba(255, 255, 255, 0.05)'
-          },
-          ticks: {
-            color: '#94a3b8',
-            callback: function (value) {
-              return '€' + (value / 1000) + 'k';
-            }
-          }
-        },
-        x: {
-          grid: {
-            display: false
-          },
-          ticks: {
-            color: '#94a3b8'
-          }
-        }
-      }
-    }
-  });
-
-  // Créer la légende interactive
-  createInteractiveLegend('supplierLegend', supplierRevenueChart);
 }
 
 // Fonction pour créer une légende interactive avec masquage de courbes
@@ -289,3 +287,56 @@ function createInteractiveLegend(containerId, chart) {
     container.appendChild(legendItem);
   });
 }
+
+// Créer le graphique des revenus par fournisseur
+function createSupplierRevenueChart(suppliers) {
+  const supplierRevenueChartCtx = document.getElementById('supplierRevenueChart');
+  if (!supplierRevenueChartCtx || !suppliers) return;
+  
+  // Détruire l'instance existante si elle existe
+  if (charts.supplierRevenueChart) {
+    charts.supplierRevenueChart.destroy();
+  }
+  
+  const labels = suppliers.map(s => s.name);
+  const data = suppliers.map(s => s.total_revenue);
+  
+  charts.supplierRevenueChart = new Chart(supplierRevenueChartCtx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Revenus',
+        data: data,
+        backgroundColor: chartColors.success,
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#94a3b8' },
+          grid: { color: 'rgba(148, 163, 184, 0.1)' }
+        },
+        x: {
+          ticks: { color: '#94a3b8' },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+  
+  createInteractiveLegend('supplierLegend', charts.supplierRevenueChart);
+}
+
+// Charger les données au chargement de la page
+document.addEventListener('DOMContentLoaded', () => {
+  loadUserInfo();
+  loadDashboardData();
+});

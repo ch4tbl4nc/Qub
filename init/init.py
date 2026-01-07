@@ -34,6 +34,3 @@ for f in files:
             conn.close()
         except mysql.connector.Error as err:
             print(f"Error: {err}")
-
-
-        

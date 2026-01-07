@@ -20,10 +20,45 @@ document.addEventListener('DOMContentLoaded', () => {
   // Gestion de la soumission du formulaire de connexion
   const loginForm = document.getElementById('login-form');
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      // Simulation - Redirection vers dashboard
-      window.location.href = 'dashboard.html';
+
+      // Récupérer les valeurs
+      const username = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        // Appel direct au backend
+        const response = await fetch('http://127.0.0.1:8000/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password,
+            totp_code: null
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log('Connexion réussie:', result);
+          
+          // Stocker le token JWT
+          localStorage.setItem('access_token', result.access_token);
+          
+          // Redirection vers dashboard
+          window.location.href = 'dashboard.html';
+        } else {
+          console.error('Erreur de connexion:', result);
+          notify.error('Erreur: ' + (result.detail || 'Identifiants incorrects'));
+        }
+      } catch (error) {
+        console.error('Erreur de connexion:', error);
+        notify.error('Impossible de contacter le serveur backend.');
+      }
     });
   }
 
@@ -42,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // 3. Petite vérification de sécurité côté client
       if (password !== confirmPassword) {
-        alert("Les mots de passe ne correspondent pas !");
+        notify.error("Les mots de passe ne correspondent pas !");
         return;
       }
 
@@ -55,28 +90,39 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        // 5. Envoyer la requête POST
+        // Appel direct au backend
         const response = await fetch('http://127.0.0.1:8000/users/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify({
+            username: name,
+            company: company,
+            email: email,
+            password: password
+          })
         });
 
         const result = await response.json();
 
-        // 6. Gérer la réponse du serveur
+        // Gérer la réponse du serveur
         if (response.ok) {
           console.log('Succès:', result);
-          alert('Compte créé avec succès !');
+          notify.success('Compte créé avec succès ! Vous pouvez maintenant vous connecter.');
+          
+          // Basculer vers l'onglet de connexion
+          document.querySelector('.tab[data-tab="login"]').click();
+          
+          // Réinitialiser le formulaire
+          registerForm.reset();
         } else {
           console.error('Erreur serveur:', result);
-          alert('Erreur lors de l\'inscription: ' + (result.detail || 'Erreur inconnue'));
+          notify.error('Erreur lors de l\'inscription: ' + (result.detail || 'Erreur inconnue'));
         }
       } catch (error) {
         console.error('Erreur de connexion:', error);
-        alert('Impossible de contacter le serveur backend.');
+        notify.error('Impossible de contacter le serveur backend.');
       }
 
     }

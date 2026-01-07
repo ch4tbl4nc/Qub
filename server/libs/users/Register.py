@@ -16,9 +16,9 @@ def register_user(username: str, company: str, email: str, password: str) -> Dic
     salt = bcrypt.gensalt()
     password_hash = bcrypt.hashpw(password_bytes, salt)
 
-    # insérer (bcrypt retourne bytes, MySQL accepte)
-    insert_q = "INSERT INTO users (username, company, email, password_hash) VALUES (%s, %s, %s, %s)"
-    rowcount = run_query(insert_q, (username, company, email, password_hash), fetch=False)
+    # insérer (bcrypt retourne bytes, MySQL accepte) - Rôle par défaut: employe
+    insert_q = "INSERT INTO users (username, company, email, password_hash, role) VALUES (%s, %s, %s, %s, %s)"
+    rowcount = run_query(insert_q, (username, company, email, password_hash, 'employe'), fetch=False)
 
     if not rowcount or rowcount == 0:
         return {'success': False, 'error': 'Erreur lors de l\'inscription'}

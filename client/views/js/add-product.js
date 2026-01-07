@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const profitDisplay = document.getElementById('profitDisplay');
   
   // Éléments de l'aperçu
-  const previewRef = document.getElementById('previewRef');
   const previewName = document.getElementById('previewName');
   const previewCategory = document.getElementById('previewCategory');
   const previewSupplier = document.getElementById('previewSupplier');
@@ -49,10 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
   marginInput.addEventListener('input', calculateSalePrice);
   
   // Mise à jour de l'aperçu en temps réel
-  document.getElementById('productRef').addEventListener('input', function(e) {
-    previewRef.textContent = e.target.value || '-';
-  });
-  
   document.getElementById('productName').addEventListener('input', function(e) {
     previewName.textContent = e.target.value || '-';
   });
@@ -85,7 +80,6 @@ document.addEventListener('DOMContentLoaded', function() {
       name: document.getElementById('productName').value.trim(),
       category: document.getElementById('productCategory').value.trim(),
       supplier: document.getElementById('productSupplier').value,
-      purchasePrice: Number.parseFloat(document.getElementById('productPurchasePrice').value),
       margin: Number.parseFloat(document.getElementById('productMargin').value),
       price: Number.parseFloat(document.getElementById('productPrice').value),
       quantity: Number.parseInt(document.getElementById('productQuantity').value),
@@ -93,34 +87,54 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // Validation
-    if (!productData.id || !productData.name || !productData.category || !productData.supplier) {
-      showNotification('Veuillez remplir tous les champs obligatoires', 'error');
+    if (!productData.name || !productData.category || !productData.supplier) {
+      notify.error('Veuillez remplir tous les champs obligatoires');
       return;
     }
     
     if (productData.purchasePrice <= 0 || productData.price <= 0) {
-      showNotification('Les prix doivent être supérieurs à 0', 'error');
+      notify.error('Les prix doivent être supérieurs à 0');
       return;
     }
     
-    if (productData.quantity < 0 || productData.threshold <= 0) {
-      showNotification('Les quantités doivent être positives', 'error');
+    if (productData.quantity < 0) {
+      notify.error('La quantité doit être positive');
       return;
     }
     
-    // Sauvegarder le produit (à connecter avec votre backend)
-    console.log('Produit à ajouter:', productData);
-    
-    // Afficher une notification de succès
-    showNotification('Produit ajouté avec succès !', 'success');
-    
-    // Rediriger vers la page de stock après 2 secondes
-    setTimeout(() => {
-      globalThis.location.href = 'stock.html';
-    }, 2000);
+    // Envoyer au backend
+    sendProductToAPI(productData);
   });
   
-  // Fonction de notification
+  // Envoyer le produit à l'API
+  async function sendProductToAPI(productData) {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/dashboard/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(productData)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        notify.success('Produit ajouté avec succès !');
+        
+        // Rediriger après 1.5 secondes
+        setTimeout(() => {
+          window.location.href = 'stock.html';
+        }, 1500);
+      } else {
+        notify.error('Erreur lors de l\'ajout du produit');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      notify.error('Impossible de communiquer avec le serveur');
+    }
+  }
+  
+  // Fonction de notification (deprecated - utiliser notify)
   function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `alert alert-${type} glass-card`;

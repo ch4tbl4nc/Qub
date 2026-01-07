@@ -395,7 +395,7 @@ document.getElementById('addContractForm').addEventListener('submit', function(e
   applyFilters();
   
   console.log('Nouveau contrat créé:', newContract);
-  alert('✅ Contrat créé avec succès !');
+  notify.success('Contrat créé avec succès !');
   
   closeAddContractModal();
   this.reset();

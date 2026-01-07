@@ -41,7 +41,25 @@ async def root():
 
 @router.get("/me")
 async def read_users_me(current_user: dict = Depends(get_current_user)):
-    return {"user": current_user}
+    """Récupère les informations complètes de l'utilisateur connecté"""
+    username = current_user.get('sub')
+    query = "SELECT id, username, company, email, role, created_at FROM users WHERE username = %s"
+    result = run_query(query, (username,), fetch=True)
+    
+    if not result:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+    
+    user_data = result[0]
+    return {
+        "user": {
+            "id": int(user_data[0]),
+            "username": user_data[1].decode() if isinstance(user_data[1], bytes) else user_data[1],
+            "company": user_data[2].decode() if isinstance(user_data[2], bytes) else user_data[2],
+            "email": user_data[3].decode() if isinstance(user_data[3], bytes) else user_data[3],
+            "role": user_data[4].decode() if isinstance(user_data[4], bytes) else user_data[4],
+            "created_at": str(user_data[5]) if user_data[5] else None
+        }
+    }
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: UserRegister):
