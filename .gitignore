@@ -3,3 +3,5 @@
 .env
 server/api/__pycache__
 __pycache__
+EXPLICATION.md
+.jshintrc
