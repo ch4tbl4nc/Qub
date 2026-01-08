@@ -18,8 +18,7 @@ async function loadUserInfo() {
     });
 
     if (response.ok) {
-      const data = await response.json();
-      const user = data.user;
+      const user = await response.json();
       
       // Mettre à jour l'avatar (initiales)
       const initials = user.username.substring(0, 2).toUpperCase();
@@ -40,31 +39,58 @@ async function loadUserInfo() {
       if (roleEl) roleEl.textContent = roleMap[user.role] || user.role;
     } else {
       console.error('Erreur lors du chargement des infos utilisateur:', response.status);
-      // Valeurs par défaut
-      const avatarEl = document.getElementById('userAvatar');
-      const nameEl = document.getElementById('userName');
-      const roleEl = document.getElementById('userRole');
-      
-      if (avatarEl) avatarEl.textContent = '??';
-      if (nameEl) nameEl.textContent = 'Utilisateur';
-      if (roleEl) roleEl.textContent = 'Employé';
+      setDefaultUserInfo();
     }
   } catch (error) {
     console.error('Erreur lors du chargement des infos utilisateur:', error);
-    // Valeurs par défaut
-    const avatarEl = document.getElementById('userAvatar');
-    const nameEl = document.getElementById('userName');
-    const roleEl = document.getElementById('userRole');
+    setDefaultUserInfo();
+  }
+}
+
+function setDefaultUserInfo() {
+  const avatarEl = document.getElementById('userAvatar');
+  const nameEl = document.getElementById('userName');
+  const roleEl = document.getElementById('userRole');
+  
+  if (avatarEl) avatarEl.textContent = '??';
+  if (nameEl) nameEl.textContent = 'Utilisateur';
+  if (roleEl) roleEl.textContent = 'Employé';
+}
+
+// Rendre le user-section clickable
+function makeUserSectionClickable() {
+  const userInfo = document.querySelector('.user-section .user-info');
+  if (userInfo && !userInfo.classList.contains('clickable-initialized')) {
+    userInfo.classList.add('clickable');
+    userInfo.style.cursor = 'pointer';
+    userInfo.style.transition = 'all 0.3s';
     
-    if (avatarEl) avatarEl.textContent = '??';
-    if (nameEl) nameEl.textContent = 'Utilisateur';
-    if (roleEl) roleEl.textContent = 'Employé';
+    userInfo.addEventListener('click', () => {
+      window.location.href = 'account.html';
+    });
+    
+    userInfo.addEventListener('mouseenter', () => {
+      userInfo.style.transform = 'translateX(5px)';
+      userInfo.style.borderColor = 'rgba(99, 102, 241, 0.3)';
+    });
+    
+    userInfo.addEventListener('mouseleave', () => {
+      userInfo.style.transform = 'translateX(0)';
+      userInfo.style.borderColor = '';
+    });
+    
+    userInfo.classList.add('clickable-initialized');
   }
 }
 
 // Charger automatiquement au chargement de la page
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadUserInfo);
+  document.addEventListener('DOMContentLoaded', () => {
+    loadUserInfo();
+    makeUserSectionClickable();
+  });
 } else {
   loadUserInfo();
+  makeUserSectionClickable();
 }
+

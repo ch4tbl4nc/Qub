@@ -31,8 +31,7 @@ async function loadUserInfo() {
     });
 
     if (response.ok) {
-      const data = await response.json();
-      const user = data.user;
+      const user = await response.json();
       
       // Mettre à jour l'avatar (initiales)
       const initials = user.username.substring(0, 2).toUpperCase();

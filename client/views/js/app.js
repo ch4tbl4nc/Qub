@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Gestion de la soumission du formulaire de connexion
   const loginForm = document.getElementById('login-form');
+  let requires2FA = false;
+  
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -26,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Récupérer les valeurs
       const username = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
+      const totpCode = document.getElementById('login-totp').value || null;
 
       try {
         // Appel direct au backend
@@ -37,29 +40,51 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({
             username: username,
             password: password,
-            totp_code: null
+            totp_code: totpCode
           })
         });
 
         const result = await response.json();
 
         if (response.ok) {
+          // Vérifier si le code 2FA est requis
+          if (result.requires_totp) {
+            // Afficher le champ 2FA
+            document.getElementById('totp-field').style.display = 'block';
+            document.getElementById('login-totp').focus();
+            requires2FA = true;
+            notify.info('Veuillez entrer votre code d\'authentification à deux facteurs');
+            return;
+          }
+          
           console.log('Connexion réussie:', result);
           
           // Stocker le token JWT
           localStorage.setItem('access_token', result.access_token);
           
-          // Redirection vers dashboard
-          window.location.href = 'dashboard.html';
+          // Notification et redirection
+          notify.success('Connexion réussie !');
+          
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 500);
         } else {
           console.error('Erreur de connexion:', result);
-          notify.error('Erreur: ' + (result.detail || 'Identifiants incorrects'));
+          notify.error(result.detail || 'Identifiants incorrects');
         }
       } catch (error) {
         console.error('Erreur de connexion:', error);
         notify.error('Impossible de contacter le serveur backend.');
       }
     });
+    
+    // Auto-format du code 2FA
+    const totpInput = document.getElementById('login-totp');
+    if (totpInput) {
+      totpInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+      });
+    }
   }
 
   // Gestion de la soumission du formulaire d'inscription
