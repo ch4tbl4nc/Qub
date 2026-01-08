@@ -1,0 +1,12 @@
+### bandit.yaml
+profiles:
+  test_profile:
+    include:
+      - security_warnings
+
+tests:
+  # B101: assert_used - Souvent acceptable dans les tests, à exclure si besoin
+  skips: ['B101']
+
+### Options pour scanner
+exclude_dirs: ['tests', 'venv', '.git']
