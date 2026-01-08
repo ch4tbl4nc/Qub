@@ -8,3 +8,4 @@ qrcode
 pandas
 pywebview
 requests
+bandit
