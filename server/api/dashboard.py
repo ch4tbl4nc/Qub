@@ -6,14 +6,19 @@ router = APIRouter()
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
+# Constantes pour les noms de fichiers
+PRODUCTS_CSV = "products.csv"
+SUPPLIERS_CSV = "suppliers.csv"
+CATEGORIES_CSV = "categories.csv"
+
 @router.get("/stats")
 async def get_dashboard_stats():
     """Récupère les statistiques pour le dashboard"""
     try:
         # Charger les fichiers CSV
-        products = pd.read_csv(DATA_DIR / "products.csv")
-        suppliers = pd.read_csv(DATA_DIR / "suppliers.csv")
-        categories = pd.read_csv(DATA_DIR / "categories.csv")
+        products = pd.read_csv(DATA_DIR / PRODUCTS_CSV)
+        suppliers = pd.read_csv(DATA_DIR / SUPPLIERS_CSV)
+        categories = pd.read_csv(DATA_DIR / CATEGORIES_CSV)
         
         # Calculer les KPIs
         total_revenue = products['revenue'].sum()
@@ -53,8 +58,8 @@ async def get_dashboard_stats():
 async def get_stock_stats():
     """Récupère les statistiques pour la page stock"""
     try:
-        products = pd.read_csv(DATA_DIR / "products.csv")
-        categories = pd.read_csv(DATA_DIR / "categories.csv")
+        products = pd.read_csv(DATA_DIR / PRODUCTS_CSV)
+        categories = pd.read_csv(DATA_DIR / CATEGORIES_CSV)
         
         # Calculer total stock
         total_quantity = products['quantity'].sum()
@@ -81,12 +86,17 @@ async def get_stock_stats():
 async def get_all_products():
     """Récupère tous les produits"""
     try:
-        products = pd.read_csv(DATA_DIR / "products.csv")
+        products = pd.read_csv(DATA_DIR / PRODUCTS_CSV)
         # Calculer le statut du stock
         result = []
         for _, row in products.iterrows():
-            threshold = 20  # Seuil de stock faible
-            status = "Élevé" if row['quantity'] > row['threshold'] else ("Moyen" if row['quantity'] > 10 else "Faible")
+            # Déterminer le statut du stock
+            if row['quantity'] > row['threshold']:
+                status = "Élevé"
+            elif row['quantity'] > 10:
+                status = "Moyen"
+            else:
+                status = "Faible"
             result.append({
                 'id': f"REF-{str(row['id']).zfill(3)}",
                 'name': row['name'],
@@ -108,11 +118,11 @@ async def get_all_products():
 async def delete_product(product_id: str):
     """Supprime un produit"""
     try:
-        products = pd.read_csv(DATA_DIR / "products.csv")
+        products = pd.read_csv(DATA_DIR / PRODUCTS_CSV)
         # Extraire l'ID numérique
         numeric_id = int(product_id.replace('REF-', ''))
         products = products[products['id'] != numeric_id]
-        products.to_csv(DATA_DIR / "products.csv", index=False)
+        products.to_csv(DATA_DIR / PRODUCTS_CSV, index=False)
         return {"success": True, "message": "Produit supprimé"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -121,7 +131,7 @@ async def delete_product(product_id: str):
 async def create_product(product: dict):
     """Ajoute un nouveau produit"""
     try:
-        products = pd.read_csv(DATA_DIR / "products.csv")
+        products = pd.read_csv(DATA_DIR / PRODUCTS_CSV)
         
         # Générer nouvel ID
         new_id = products['id'].max() + 1 if len(products) > 0 else 1
@@ -142,7 +152,7 @@ async def create_product(product: dict):
         
         # Ajouter au DataFrame
         products = pd.concat([products, pd.DataFrame([new_product])], ignore_index=True)
-        products.to_csv(DATA_DIR / "products.csv", index=False)
+        products.to_csv(DATA_DIR / PRODUCTS_CSV, index=False)
         
         return {"success": True, "message": "Produit ajouté", "id": f"REF-{str(new_id).zfill(3)}"}
     except Exception as e:
@@ -152,7 +162,7 @@ async def create_product(product: dict):
 async def get_all_suppliers():
     """Récupère tous les fournisseurs"""
     try:
-        suppliers = pd.read_csv(DATA_DIR / "suppliers.csv")
+        suppliers = pd.read_csv(DATA_DIR / SUPPLIERS_CSV)
         return suppliers.to_dict('records')
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

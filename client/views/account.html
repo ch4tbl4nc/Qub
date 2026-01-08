@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUB - Gestion du compte</title>
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="styles/account.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h1 class="logo">QUB</h1>
+    
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="dashboard.html" class="nav-link">
+          <span class="nav-icon">📊</span>
+          Statistiques
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="stock.html" class="nav-link">
+          <span class="nav-icon">📦</span>
+          Gestion de Stock
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="add-product.html" class="nav-link">
+          <span class="nav-icon">➕</span>
+          Ajouter un produit
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="historique.html" class="nav-link">
+          <span class="nav-icon">📋</span>
+          Historique
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="contrats.html" class="nav-link">
+          <span class="nav-icon">📄</span>
+          Contrats
+        </a>
+      </li>
+    </ul>
+    
+    <div class="user-section">
+      <div class="user-info glass-card clickable" onclick="window.location.href='account.html'">
+        <div class="user-avatar" id="userAvatar">--</div>
+        <div>
+          <div class="user-name" id="userName">Chargement...</div>
+          <div class="user-role" id="userRole">--</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Gestion du compte</h1>
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">
+          <span>← Retour</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Account Info Card -->
+    <div class="account-section glass-card">
+      <div class="section-header">
+        <h2 class="section-title">Informations du compte</h2>
+      </div>
+      <div class="account-info">
+        <div class="info-item">
+          <span class="info-label">Nom d'utilisateur</span>
+          <span class="info-value" id="accountUsername">--</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Rôle</span>
+          <span class="info-value" id="accountRole">--</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Authentification à 2 facteurs</span>
+          <span class="info-value" id="account2FAStatus">
+            <span class="status-badge error">Désactivée</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Change Password Card -->
+    <div class="account-section glass-card">
+      <div class="section-header">
+        <h2 class="section-title">🔐 Changer le mot de passe</h2>
+      </div>
+      <form id="changePasswordForm" class="account-form">
+        <div class="form-group">
+          <label for="currentPassword">Mot de passe actuel</label>
+          <input 
+            type="password" 
+            id="currentPassword" 
+            name="currentPassword" 
+            class="form-input" 
+            required
+            autocomplete="current-password"
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="newPassword">Nouveau mot de passe</label>
+          <input 
+            type="password" 
+            id="newPassword" 
+            name="newPassword" 
+            class="form-input" 
+            required
+            minlength="14"
+            autocomplete="new-password"
+          >
+          <small class="form-hint">Au moins 14 caractères</small>
+        </div>
+        
+        <div class="form-group">
+          <label for="confirmPassword">Confirmer le nouveau mot de passe</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            class="form-input" 
+            required
+            minlength="14"
+            autocomplete="new-password"
+          >
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+          Changer le mot de passe
+        </button>
+      </form>
+    </div>
+    
+    <!-- 2FA Section -->
+    <div class="account-section glass-card">
+      <div class="section-header">
+        <h2 class="section-title">🔒 Authentification à deux facteurs (A2F)</h2>
+        <p class="section-description">
+          Ajoutez une couche de sécurité supplémentaire à votre compte avec Google Authenticator
+        </p>
+      </div>
+      
+      <!-- A2F Disabled State -->
+      <div id="twofa-disabled" class="twofa-state">
+        <div class="twofa-info">
+          <p>L'authentification à deux facteurs n'est pas activée pour votre compte.</p>
+          <p>Une fois activée, vous devrez saisir un code généré par votre application d'authentification à chaque connexion.</p>
+        </div>
+        <button id="enableTwoFABtn" class="btn btn-primary">
+          Activer l'A2F
+        </button>
+      </div>
+      
+      <!-- A2F Setup State -->
+      <div id="twofa-setup" class="twofa-state" style="display: none;">
+        <div class="twofa-steps">
+          <h3>Configuration de l'A2F</h3>
+          
+          <div class="setup-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h4>Installez Google Authenticator</h4>
+              <p>Téléchargez l'application sur votre smartphone :</p>
+              <div class="app-links">
+                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" class="app-link">
+                  📱 Android
+                </a>
+                <a href="https://apps.apple.com/app/google-authenticator/id388497605" target="_blank" class="app-link">
+                  🍎 iOS
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="setup-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h4>Scannez le QR code</h4>
+              <p>Ouvrez Google Authenticator et scannez ce code :</p>
+              <div class="qr-code-container">
+                <img id="qrCodeImage" src="" alt="QR Code" class="qr-code">
+                <div class="qr-loading" id="qrLoading">
+                  <div class="spinner"></div>
+                  <p>Génération du QR code...</p>
+                </div>
+              </div>
+              <div class="secret-key">
+                <p>Ou entrez manuellement la clé :</p>
+                <code id="secretKey" class="secret-code">--</code>
+                <button class="btn-icon" onclick="copySecret()" title="Copier">
+                  📋
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="setup-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h4>Vérifiez le code</h4>
+              <p>Entrez le code à 6 chiffres généré par l'application :</p>
+              <div class="verify-form">
+                <input 
+                  type="text" 
+                  id="verifyCode" 
+                  class="form-input code-input" 
+                  placeholder="000000"
+                  maxlength="6"
+                  pattern="[0-9]{6}"
+                  autocomplete="off"
+                >
+                <button id="verifyCodeBtn" class="btn btn-primary">
+                  Vérifier et activer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <button id="cancelTwoFABtn" class="btn btn-secondary">
+          Annuler
+        </button>
+      </div>
+      
+      <!-- A2F Enabled State -->
+      <div id="twofa-enabled" class="twofa-state" style="display: none;">
+        <div class="twofa-enabled-info">
+          <div class="success-icon">✓</div>
+          <h3>Authentification à deux facteurs activée</h3>
+          <p>Votre compte est protégé par l'A2F. Un code sera demandé à chaque connexion.</p>
+        </div>
+        <button id="disableTwoFABtn" class="btn btn-danger">
+          Désactiver l'A2F
+        </button>
+      </div>
+    </div>
+    
+    <!-- Logout Button -->
+    <div class="account-section">
+      <button id="logoutBtn" class="btn btn-danger btn-full">
+        🚪 Se déconnecter
+      </button>
+    </div>
+  </main>
+  
+  <!-- Scripts -->
+  <script src="js/notifications.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/user-info.js"></script>
+  <script src="js/account.js"></script>
+  <script>
+    Auth.protectPage();
+  </script>
+</body>
+</html>

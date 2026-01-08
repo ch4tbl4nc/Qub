@@ -5,11 +5,18 @@ from pathlib import Path
 router = APIRouter()
 DATA_DIR = Path(__file__).parent.parent / "data"
 
+# Constantes pour les noms de fichiers
+CONTRACTS_CSV = "contracts.csv"
+ORDERS_CSV = "orders.csv"
+ORDER_ITEMS_CSV = "order_items.csv"
+CONTRACT_PRODUCTS_CSV = "contract_products.csv"
+PRODUCTS_CSV = "products.csv"
+
 @router.get("/contracts/stats")
 async def get_contract_stats():
     """Récupère les statistiques des contrats"""
     try:
-        contracts = pd.read_csv(DATA_DIR / "contracts.csv")
+        contracts = pd.read_csv(DATA_DIR / CONTRACTS_CSV)
         
         # Calculer les stats
         total_active = len(contracts[contracts['status'] == 'active'])
@@ -28,8 +35,8 @@ async def get_contract_stats():
 async def get_orders():
     """Récupère toutes les commandes avec leurs produits"""
     try:
-        orders = pd.read_csv(DATA_DIR / "orders.csv")
-        order_items = pd.read_csv(DATA_DIR / "order_items.csv")
+        orders = pd.read_csv(DATA_DIR / ORDERS_CSV)
+        order_items = pd.read_csv(DATA_DIR / ORDER_ITEMS_CSV)
         
         result = []
         for _, order in orders.iterrows():
@@ -61,8 +68,8 @@ async def get_orders():
 async def create_order(order: dict):
     """Crée une nouvelle commande"""
     try:
-        orders = pd.read_csv(DATA_DIR / "orders.csv")
-        order_items = pd.read_csv(DATA_DIR / "order_items.csv")
+        orders = pd.read_csv(DATA_DIR / ORDERS_CSV)
+        order_items = pd.read_csv(DATA_DIR / ORDER_ITEMS_CSV)
         
         # Générer nouvel ID
         new_id = f"CMD-{str(len(orders) + 1).zfill(3)}"
@@ -77,7 +84,7 @@ async def create_order(order: dict):
         }
         
         orders = pd.concat([orders, pd.DataFrame([new_order])], ignore_index=True)
-        orders.to_csv(DATA_DIR / "orders.csv", index=False)
+        orders.to_csv(DATA_DIR / ORDERS_CSV, index=False)
         
         # Ajouter les produits
         for product in order.get('products', []):
@@ -90,7 +97,7 @@ async def create_order(order: dict):
             }
             order_items = pd.concat([order_items, pd.DataFrame([new_item])], ignore_index=True)
         
-        order_items.to_csv(DATA_DIR / "order_items.csv", index=False)
+        order_items.to_csv(DATA_DIR / ORDER_ITEMS_CSV, index=False)
         
         return {"success": True, "message": "Commande créée", "id": new_id}
     except Exception as e:
@@ -100,8 +107,8 @@ async def create_order(order: dict):
 async def get_contracts():
     """Récupère tous les contrats avec leurs produits"""
     try:
-        contracts = pd.read_csv(DATA_DIR / "contracts.csv")
-        contract_products = pd.read_csv(DATA_DIR / "contract_products.csv")
+        contracts = pd.read_csv(DATA_DIR / CONTRACTS_CSV)
+        contract_products = pd.read_csv(DATA_DIR / CONTRACT_PRODUCTS_CSV)
         
         result = []
         for _, contract in contracts.iterrows():
@@ -153,7 +160,7 @@ async def create_contract(contract: dict):
         }
         
         contracts = pd.concat([contracts, pd.DataFrame([new_contract])], ignore_index=True)
-        contracts.to_csv(DATA_DIR / "contracts.csv", index=False)
+        contracts.to_csv(DATA_DIR / CONTRACTS_CSV, index=False)
         
         # Ajouter les produits
         for product in contract.get('products', []):
@@ -166,7 +173,7 @@ async def create_contract(contract: dict):
             }
             contract_products = pd.concat([contract_products, pd.DataFrame([new_product])], ignore_index=True)
         
-        contract_products.to_csv(DATA_DIR / "contract_products.csv", index=False)
+        contract_products.to_csv(DATA_DIR / CONTRACT_PRODUCTS_CSV, index=False)
         
         return {"success": True, "message": "Contrat créé", "id": new_id}
     except Exception as e:

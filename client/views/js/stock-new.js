@@ -48,6 +48,41 @@ function updateLowStockAlert(lowStockCount) {
   }
 }
 
+
+async function loadSuppliersToSelect() {
+    const selectMenu = document.getElementById('supplierSelect');
+
+    try {
+        // 1. Récupérer TOUS les contrats
+        const response = await fetch(`${API_URL}/history/contracts`);
+        if (!response.ok) throw new Error('Erreur réseau');
+        
+        const contracts = await response.json();
+
+        // 2. Extraire uniquement les noms des suppliers
+        // On utilise map() pour avoir une liste de noms, puis new Set() pour dédoublonner
+        const allSuppliers = contracts.map(contrat => contrat.supplier);
+        const uniqueSuppliers = [...new Set(allSuppliers)]; // Conversion du Set en Array
+
+        // 3. Vider le select et ajouter l'option par défaut
+        selectMenu.innerHTML = '<option value="">Sélectionnez un fournisseur</option>';
+
+        // 4. Ajouter chaque supplier unique dans le select
+        uniqueSuppliers.sort().forEach(supplierName => {
+            // new Option(text, value)
+            // Ici le texte affiché et la valeur envoyée sont identiques
+            const option = new Option(supplierName, supplierName);
+            selectMenu.add(option);
+        });
+
+        console.log(`${uniqueSuppliers.length} fournisseurs chargés.`);
+
+    } catch (error) {
+        console.error("Erreur lors du chargement des fournisseurs:", error);
+        selectMenu.innerHTML = '<option value="">Erreur de chargement</option>';
+    }
+}
+
 // Charger les produits depuis l'API
 async function loadProducts() {
   try {
@@ -187,8 +222,8 @@ function openModal(productId = null) {
     document.getElementById('productName').value = product.name;
     document.getElementById('productId').value = product.id;
     document.getElementById('productRef').value = product.id;
-    document.getElementById('productCategory').value = product.category.toLowerCase();
-    document.getElementById('productSupplier').value = product.supplier.toLowerCase();
+    document.getElementById('productCategory').value = product.category;
+    document.getElementById('supplierSelect').value = product.supplier;
     document.getElementById('productPrice').value = product.price;
     document.getElementById('productMargin').value = product.margin;
     document.getElementById('productQuantity').value = product.quantity;
@@ -257,7 +292,7 @@ form.addEventListener('submit', async function (e) {
     id: document.getElementById('productRef').value.trim(),
     name: document.getElementById('productName').value.trim(),
     category: document.getElementById('productCategory').value.trim(),
-    supplier: document.getElementById('productSupplier').value,
+    supplier: document.getElementById('supplierSelect').value,
     margin: Number.parseFloat(document.getElementById('productMargin').value),
     price: Number.parseFloat(document.getElementById('productPrice').value),
     quantity: Number.parseInt(document.getElementById('productQuantity').value),
@@ -351,4 +386,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // Charger les données
   loadStockStats();
   loadProducts();
+  loadSuppliersToSelect()
 });

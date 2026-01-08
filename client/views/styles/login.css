@@ -100,6 +100,20 @@
   justify-content: center;
 }
 
+.input-hint {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.code-input {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: 4px;
+}
+
 @media (max-width: 576px) {
   .login-box {
     padding: var(--spacing-lg);

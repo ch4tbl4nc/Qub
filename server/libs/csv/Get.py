@@ -1,9 +1,8 @@
 
+"""Récupération d'une ligne d'un fichier CSV pour QUB."""
 import pandas as pd
 
 def get_csv(file_path, index):
-    """Get a CSV row in file and returns its content as a list of dictionaries."""
-
+    """Récupère une ligne d'un fichier CSV et la retourne sous forme de dictionnaire."""
     df = pd.read_csv(file_path)
-        
     return df.loc[index]

@@ -1,7 +1,12 @@
+"""Utilitaires TOTP pour génération de secrets, URI et QR codes.
+
+Fournit des helpers pour l'intégration avec Google Authenticator.
+"""
+import base64
+from io import BytesIO
+
 import pyotp
 import qrcode
-from io import BytesIO
-import base64
 
 def generate_totp_secret():
     """Génère un secret TOTP aléatoire"""
