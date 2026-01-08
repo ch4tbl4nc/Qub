@@ -1,0 +1,16 @@
+# Safety Security and License Configuration file
+
+security:
+  ignore-cvss-severity-below: 0  # Score entre 0 et 10
+  ignore-cvss-unknown-severity: False
+  
+  ignore-vulnerabilities:
+    # ID de vulnérabilité à ignorer
+    51668:
+      reason: Raison pour laquelle vous ignorez cette vulnérabilité
+      expires: '2026-03-01'
+  
+  continue-on-vulnerability-error: False
+
+scanning-settings:
+  max-depth: 6  # Profondeur maximale de scan des dossiers

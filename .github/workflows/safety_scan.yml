@@ -1,0 +1,23 @@
+name: Python Safety Check
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    name: Safety Security Scan
+    steps:
+      - name: Check out code
+        uses: actions/checkout@master
+      
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        
+      - name: Run Safety check
+        run: safety check -r requirements.txt
+        
