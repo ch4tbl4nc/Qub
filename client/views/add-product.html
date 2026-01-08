@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,12 @@
   <link rel="stylesheet" href="styles/global.css">
   <link rel="stylesheet" href="styles/add-product.css">
 </head>
+
 <body>
   <!-- Sidebar -->
   <aside class="sidebar">
     <h1 class="logo">QUB</h1>
-    
+
     <ul class="nav-menu">
       <li class="nav-item">
         <a href="dashboard.html" class="nav-link">
@@ -45,7 +47,7 @@
         </a>
       </li>
     </ul>
-    
+
     <div class="user-section">
       <div class="user-info glass-card">
         <div class="user-avatar" id="userAvatar">--</div>
@@ -56,7 +58,7 @@
       </div>
     </div>
   </aside>
-  
+
   <!-- Main Content -->
   <main class="main-content">
     <div class="page-header">
@@ -68,131 +70,87 @@
         </a>
       </div>
     </div>
-    
+
     <!-- Formulaire d'ajout -->
     <div class="form-container glass-card">
       <form id="addProductForm">
-        
+
         <!-- Section Informations générales -->
         <div class="form-section">
           <h3 class="section-title">📋 Informations générales</h3>
-          
+
           <div class="form-row">
             <div class="input-group">
               <label class="input-label" for="productRef">
                 ID Référence <span class="required">*</span>
               </label>
-              <input 
-                type="text" 
-                class="input-field" 
-                id="productRef" 
-                placeholder="Ex: REF-001" 
-                required
-              >
+              <input type="text" class="input-field" id="productRef" placeholder="Ex: REF-001" required>
               <small class="input-help">Identifiant unique du produit</small>
             </div>
-            
+
             <div class="input-group">
               <label class="input-label" for="productName">
                 Nom du produit <span class="required">*</span>
               </label>
-              <input 
-                type="text" 
-                class="input-field" 
-                id="productName" 
-                placeholder="Ex: iPhone 15 Pro" 
-                required
-              >
+              <input type="text" class="input-field" id="productName" placeholder="Ex: iPhone 15 Pro" required>
             </div>
           </div>
-          
+
           <div class="form-row">
             <div class="input-group">
               <label class="input-label" for="productCategory">
                 Catégorie <span class="required">*</span>
               </label>
-              <input 
-                type="text" 
-                class="input-field" 
-                id="productCategory" 
-                placeholder="Ex: Électronique" 
-                required
-              >
+              <input type="text" class="input-field" id="productCategory" placeholder="Ex: Électronique" required>
             </div>
-            
+
             <div class="input-group">
               <label class="input-label" for="productSupplier">
                 Fournisseur <span class="required">*</span>
               </label>
-              <select class="input-field" id="productSupplier" required>
-                <option value="">Sélectionner...</option>
-                <option value="TechCorp">TechCorp</option>
-                <option value="ElectroPlus">ElectroPlus</option>
-                <option value="MegaDistrib">MegaDistrib</option>
+              <select id="supplierSelect" class="input-field">
+                <option value="">Chargement...</option>
               </select>
             </div>
           </div>
         </div>
-        
+
         <!-- Section Prix et Marge -->
         <div class="form-section">
           <h3 class="section-title">💰 Prix et Marge</h3>
-          
+
           <div class="form-row">
             <div class="input-group">
               <label class="input-label" for="productPurchasePrice">
                 Prix d'achat à l'unité (€) <span class="required">*</span>
               </label>
-              <input 
-                type="number" 
-                class="input-field" 
-                id="productPurchasePrice" 
-                step="0.01" 
-                min="0" 
-                placeholder="0.00" 
-                required
-              >
+              <input type="number" class="input-field" id="productPurchasePrice" step="0.01" min="0" placeholder="0.00"
+                required>
               <small class="input-help">Prix auquel vous achetez le produit</small>
             </div>
-            
+
             <div class="input-group">
               <label class="input-label" for="productMargin">
                 Marge (%) <span class="required">*</span>
               </label>
-              <input 
-                type="number" 
-                class="input-field" 
-                id="productMargin" 
-                step="0.1" 
-                min="0" 
-                max="1000" 
-                placeholder="0.0" 
-                required
-              >
+              <input type="number" class="input-field" id="productMargin" step="0.1" min="0" max="1000"
+                placeholder="0.0" required>
               <small class="input-help">Marge bénéficiaire en pourcentage</small>
             </div>
           </div>
-          
+
           <div class="form-row">
             <div class="input-group">
               <label class="input-label" for="productPrice">
                 Prix de vente (€) <span class="required">*</span>
               </label>
-              <input 
-                type="number" 
-                class="input-field input-calculated" 
-                id="productPrice" 
-                step="0.01" 
-                min="0" 
-                placeholder="0.00" 
-                readonly
-                required
-              >
+              <input type="number" class="input-field input-calculated" id="productPrice" step="0.01" min="0"
+                placeholder="0.00" readonly required>
               <small class="input-help calculated-help">
                 ✓ Calculé automatiquement
               </small>
             </div>
-            
+
             <div class="input-group">
               <div class="calculation-display glass-card">
                 <div class="calc-label">Bénéfice par unité</div>
@@ -201,43 +159,29 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Section Stock -->
         <div class="form-section">
           <h3 class="section-title">📦 Gestion du stock</h3>
-          
+
           <div class="form-row">
             <div class="input-group">
               <label class="input-label" for="productQuantity">
                 Quantité en stock <span class="required">*</span>
               </label>
-              <input 
-                type="number" 
-                class="input-field" 
-                id="productQuantity" 
-                min="0" 
-                placeholder="0" 
-                required
-              >
+              <input type="number" class="input-field" id="productQuantity" min="0" placeholder="0" required>
             </div>
-            
+
             <div class="input-group">
               <label class="input-label" for="productThreshold">
                 Seuil d'alerte stock faible <span class="required">*</span>
               </label>
-              <input 
-                type="number" 
-                class="input-field" 
-                id="productThreshold" 
-                min="1" 
-                value="10"
-                required
-              >
+              <input type="number" class="input-field" id="productThreshold" min="1" value="10" required>
               <small class="input-help">Vous serez alerté si le stock descend sous ce seuil</small>
             </div>
           </div>
         </div>
-        
+
         <!-- Boutons d'action -->
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" onclick="window.location.href='stock.html'">
@@ -253,7 +197,7 @@
         </div>
       </form>
     </div>
-    
+
     <!-- Aperçu du produit -->
     <div class="preview-container glass-card">
       <h3 class="preview-title">👁️ Aperçu du produit</h3>
@@ -303,11 +247,12 @@
       </div>
     </div>
   </main>
-  
+
   <script src="js/notifications.js"></script>
   <script src="js/auth.js"></script>
   <script>Auth.protectPage();</script>
   <script src="js/user-info.js"></script>
   <script src="js/add-product.js"></script>
 </body>
+
 </html>

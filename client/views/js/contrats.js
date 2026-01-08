@@ -1,127 +1,43 @@
 // Données de démonstration
-const contractsData = [
-  {
-    id: 'CNT-2024-001',
-    supplier: 'TechCorp',
-    startDate: '2024-01-15',
-    duration: '24 mois',
-    endDate: '2026-01-15',
-    status: 'active',
-    value: 450000,
-    products: [
-      { name: 'iPhone 15 Pro', purchasePrice: 950, salePrice: 1199.99, margin: 26.3 },
-      { name: 'MacBook Air M2', purchasePrice: 1100, salePrice: 1399.99, margin: 27.3 },
-      { name: 'iPad Pro 12.9"', purchasePrice: 1050, salePrice: 1299.99, margin: 23.8 },
-      { name: 'Apple Watch Ultra', purchasePrice: 650, salePrice: 849.99, margin: 30.8 }
-    ]
-  },
-  {
-    id: 'CNT-2024-002',
-    supplier: 'ElectroPlus',
-    startDate: '2024-03-01',
-    duration: '18 mois',
-    endDate: '2025-09-01',
-    status: 'active',
-    value: 320000,
-    products: [
-      { name: 'AirPods Pro', purchasePrice: 210, salePrice: 279.99, margin: 33.3 },
-      { name: 'Samsung Galaxy S24', purchasePrice: 720, salePrice: 899.99, margin: 25.0 },
-      { name: 'Sony WH-1000XM5', purchasePrice: 310, salePrice: 399.99, margin: 29.0 }
-    ]
-  },
-  {
-    id: 'CNT-2024-003',
-    supplier: 'MegaDistrib',
-    startDate: '2023-06-01',
-    duration: '36 mois',
-    endDate: '2026-06-01',
-    status: 'active',
-    value: 580000,
-    products: [
-      { name: 'Dell XPS 15', purchasePrice: 1550, salePrice: 1899.99, margin: 22.6 },
-      { name: 'Magic Keyboard', purchasePrice: 115, salePrice: 149.99, margin: 30.4 },
-      { name: 'Logitech MX Master', purchasePrice: 75, salePrice: 99.99, margin: 33.3 }
-    ]
-  },
-  {
-    id: 'CNT-2023-015',
-    supplier: 'GlobalSupply',
-    startDate: '2023-02-01',
-    duration: '12 mois',
-    endDate: '2025-02-01',
-    status: 'expiring',
-    value: 180000,
-    products: [
-      { name: 'HP Pavilion', purchasePrice: 650, salePrice: 799.99, margin: 23.1 },
-      { name: 'Lenovo ThinkPad', purchasePrice: 980, salePrice: 1199.99, margin: 22.5 }
-    ]
-  },
-  {
-    id: 'CNT-2023-008',
-    supplier: 'SmartTech',
-    startDate: '2023-01-01',
-    duration: '12 mois',
-    endDate: '2024-01-01',
-    status: 'expired',
-    value: 95000,
-    products: [
-      { name: 'Xiaomi Mi Band', purchasePrice: 35, salePrice: 49.99, margin: 42.9 },
-      { name: 'Google Nest Hub', purchasePrice: 75, salePrice: 99.99, margin: 33.3 }
-    ]
-  },
-  {
-    id: 'CNT-2024-004',
-    supplier: 'AudioPro',
-    startDate: '2024-04-15',
-    duration: '24 mois',
-    endDate: '2026-04-15',
-    status: 'active',
-    value: 275000,
-    products: [
-      { name: 'Bose QuietComfort', purchasePrice: 280, salePrice: 349.99, margin: 25.0 },
-      { name: 'JBL Flip 6', purchasePrice: 95, salePrice: 129.99, margin: 36.9 },
-      { name: 'Sonos One', purchasePrice: 165, salePrice: 219.99, margin: 33.3 }
-    ]
-  },
-  {
-    id: 'CNT-2023-022',
-    supplier: 'CompuWorld',
-    startDate: '2023-09-01',
-    duration: '18 mois',
-    endDate: '2025-03-01',
-    status: 'expiring',
-    value: 420000,
-    products: [
-      { name: 'ASUS ROG Laptop', purchasePrice: 1650, salePrice: 1999.99, margin: 21.2 },
-      { name: 'MSI Gaming Monitor', purchasePrice: 380, salePrice: 499.99, margin: 31.6 }
-    ]
-  },
-  {
-    id: 'CNT-2024-005',
-    supplier: 'MobileStore',
-    startDate: '2024-05-01',
-    duration: '12 mois',
-    endDate: '2025-05-01',
-    status: 'expiring',
-    value: 210000,
-    products: [
-      { name: 'OnePlus 12', purchasePrice: 580, salePrice: 749.99, margin: 29.3 },
-      { name: 'Google Pixel 8', purchasePrice: 550, salePrice: 699.99, margin: 27.3 }
-    ]
+// Variable globale qui contiendra la liste des contrats
+let contractsData = [];
+
+const API_URL = 'http://127.0.0.1:8000'; // À ajuster selon ton env
+
+/**
+ * Récupère les contrats depuis l'API et met à jour la variable globale 'allContracts'
+ */
+async function fetchAllContracts() {
+  try {
+    const response = await fetch(`${API_URL}/history/contracts`);
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+
+    // On stocke le résultat dans la variable globale
+    contractsData = await response.json();
+
+    console.log("✅ Contrats chargés :", contractsData.length);
+    return contractsData; // On retourne aussi la liste si besoin d'enchainer
+  } catch (error) {
+    console.error("❌ Erreur lors de la récupération des contrats :", error);
+    contractsData = []; // En cas d'erreur, on s'assure que
+    return [];
   }
-];
+}
 
 let filteredContracts = [...contractsData];
 
 // Rendu des contrats
 function renderContracts(data = filteredContracts) {
   const grid = document.getElementById('contractsGrid');
-  
+
   grid.innerHTML = data.map(contract => {
     const daysUntilExpiry = getDaysUntilExpiry(contract.endDate);
     const productsToShow = contract.products.slice(0, 3);
     const remainingProducts = contract.products.length - 3;
-    
+
     return `
       <div class="contract-card" data-contract-id="${contract.id}">
         <div class="contract-header">
@@ -170,7 +86,7 @@ function renderContracts(data = filteredContracts) {
       </div>
     `;
   }).join('');
-  
+
   attachContractClickListeners();
 }
 
@@ -204,16 +120,16 @@ function applyFilters() {
   const searchTerm = document.getElementById('searchInput').value.toLowerCase();
   const statusFilter = document.getElementById('statusFilter').value;
   const sortFilter = document.getElementById('sortFilter').value;
-  
+
   // Filtrage
   filteredContracts = contractsData.filter(contract => {
     const matchSearch = contract.id.toLowerCase().includes(searchTerm) ||
-                       contract.supplier.toLowerCase().includes(searchTerm);
+      contract.supplier.toLowerCase().includes(searchTerm);
     const matchStatus = !statusFilter || contract.status === statusFilter;
-    
+
     return matchSearch && matchStatus;
   });
-  
+
   // Tri
   filteredContracts.sort((a, b) => {
     switch (sortFilter) {
@@ -229,7 +145,7 @@ function applyFilters() {
         return 0;
     }
   });
-  
+
   renderContracts(filteredContracts);
 }
 
@@ -243,9 +159,9 @@ const contractModal = document.getElementById('contractModal');
 function openContractModal(contractId) {
   const contract = contractsData.find(c => c.id === contractId);
   if (!contract) return;
-  
+
   const totalMargin = contract.products.reduce((sum, p) => sum + p.margin, 0) / contract.products.length;
-  
+
   document.getElementById('contractModalTitle').textContent = `Contrat ${contract.id}`;
   document.getElementById('contractModalBody').innerHTML = `
     <div class="contract-details">
@@ -322,7 +238,7 @@ function openContractModal(contractId) {
       </div>
     </div>
   `;
-  
+
   contractModal.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
@@ -372,14 +288,14 @@ document.getElementById('cancelAddContractBtn').addEventListener('click', closeA
 addContractModal.querySelector('.modal-overlay').addEventListener('click', closeAddContractModal);
 
 // Soumission du formulaire
-document.getElementById('addContractForm').addEventListener('submit', function(e) {
+document.getElementById('addContractForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  
+
   const duration = document.getElementById('newContractDuration').value;
   const startDate = new Date(document.getElementById('newContractStartDate').value);
   const endDate = new Date(startDate);
   endDate.setMonth(endDate.getMonth() + parseInt(duration));
-  
+
   const newContract = {
     id: document.getElementById('newContractId').value,
     supplier: document.getElementById('newContractSupplier').value,
@@ -390,13 +306,13 @@ document.getElementById('addContractForm').addEventListener('submit', function(e
     value: 0,
     products: []
   };
-  
+
   contractsData.push(newContract);
   applyFilters();
-  
+
   console.log('Nouveau contrat créé:', newContract);
   notify.success('Contrat créé avec succès !');
-  
+
   closeAddContractModal();
   this.reset();
 });
