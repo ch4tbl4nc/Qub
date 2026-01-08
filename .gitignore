@@ -3,10 +3,6 @@
 .env
 server/api/__pycache__
 __pycache__
-EXPLICATION.md
 .jshintrc
 myenv
 venv
-après-pylint.txt
-avant-pylint.txt
-qub.spec
