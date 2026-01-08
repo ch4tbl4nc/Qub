@@ -10,6 +10,7 @@ from libs.database.RunQuery import run_query
 import pyotp
 import bcrypt
 
+detail404 = "Utilisateur introuvable"
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
@@ -51,7 +52,7 @@ async def change_password(data: ChangePassword, current_user: dict = Depends(get
     result = run_query(query, (username,), fetch=True)
     
     if not result:
-        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+        raise HTTPException(status_code=404, detail=detail404)
     
     stored_password = result[0][0]
     if isinstance(stored_password, bytes):
@@ -126,7 +127,7 @@ async def read_users_me(current_user: dict = Depends(get_current_user)):
     result = run_query(query, (username,), fetch=True)
     
     if not result:
-        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+        raise HTTPException(status_code=404, detail=detail404)
     
     user_data = result[0]
     return {
@@ -188,7 +189,7 @@ async def enable_totp(data: TOTPEnable):
     query = "SELECT username FROM users WHERE id = %s"
     result = run_query(query, (data.user_id,), fetch=True)
     if not result:
-        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+        raise HTTPException(status_code=404, detail=detail404)
     
     username = result[0][0]
     if isinstance(username, bytes):

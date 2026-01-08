@@ -122,7 +122,7 @@ document.getElementById('statusFilter')?.addEventListener('change', filterOrders
 // Ajouter les event listeners pour les onglets
 document.querySelectorAll('.history-tab').forEach(tab => {
   tab.addEventListener('click', () => {
-    const tabName = tab.getAttribute('data-tab');
+    const tabName = tab.dataset.tab;
     switchTab(tabName);
   });
 });

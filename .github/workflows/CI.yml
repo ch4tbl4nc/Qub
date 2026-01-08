@@ -1,4 +1,4 @@
-name: CI/CD - QUB Application
+name: CI - QUB Application
 
 on:
   push:
@@ -195,10 +195,10 @@ jobs:
     if: always()
     
     steps:
-      - name: Résumé du pipeline CI/CD
+      - name: Résumé du pipeline CI
         run: |
           echo "=========================================="
-          echo "     RÉSUMÉ CI/CD - PROJET QUB"
+          echo "     RÉSUMÉ CI - PROJET QUB"
           echo "=========================================="
           echo ""
           echo "✓ Tests & Quality: ${{ needs.tests-and-quality.result }}"

@@ -122,7 +122,7 @@ async def delete_product(product_id: str):
         # Extraire l'ID numérique
         numeric_id = int(product_id.replace('REF-', ''))
         products = products[products['id'] != numeric_id]
-        products.to_csv(DATA_DIR / "products.csv", index=False)
+        products.to_csv(DATA_DIR / PRODUCTS_CSV, index=False)
         return {"success": True, "message": "Produit supprimé"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -131,7 +131,7 @@ async def delete_product(product_id: str):
 async def create_product(product: dict):
     """Ajoute un nouveau produit"""
     try:
-        products = pd.read_csv(DATA_DIR / "products.csv")
+        products = pd.read_csv(DATA_DIR / PRODUCTS_CSV)
         
         # Générer nouvel ID
         new_id = products['id'].max() + 1 if len(products) > 0 else 1
