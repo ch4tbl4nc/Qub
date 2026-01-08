@@ -9,13 +9,23 @@ def start_backend():
     """Lance le serveur FastAPI dans un processus séparé"""
     server_path = Path(__file__).parent / "server"
     sys.path.insert(0, str(server_path))
-    
-    uvicorn.run(
-        "index:app",
-        host="127.0.0.1",
-        port=8000,
-        log_level="warning"  # Moins verbeux
-    )
+
+    try:
+        # On désactive les signaux ici pour laisser le processus parent gérer l'arrêt
+        # ou on laisse uvicorn gérer, mais on capture la sortie.
+        uvicorn.run(
+            "index:app",
+            host="127.0.0.1",
+            port=8000,
+            log_level="error", # On réduit le niveau de log pour masquer les infos de shutdown
+            loop="asyncio"     # Force asyncio standard (plus stable sur Windows avec Py3.11+)
+        )
+    except KeyboardInterrupt:
+        # C'est ici que la magie opère : on attrape l'interruption et on ne fait RIEN.
+        pass
+    except Exception as e:
+        # On loggue uniquement les vraies erreurs, pas les arrêts forcés
+        print(f"Erreur backend: {e}")
 
 def wait_for_backend():
     """Attend que le backend soit prêt"""
