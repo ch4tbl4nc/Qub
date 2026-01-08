@@ -145,7 +145,7 @@ jobs:
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        continue-on-error: true
+        continue-on-error: true 
 
   # Job 3: Sécurité
   security-audit:
@@ -214,5 +214,5 @@ jobs:
           elif [ "${{ needs.sonarqube-analysis.result }}" == "failure" ]; then
             echo "⚠️  Analyse SonarQube échouée mais build continue"
           else
-            echo "✓ Pipeline CI/CD réussi"
+            echo "✓ Pipeline CI réussi"
           fi

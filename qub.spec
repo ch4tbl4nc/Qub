@@ -1,7 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-# Configuration PyInstaller pour créer un exécutable QUB
 
-block_cipher = None
 
 a = Analysis(
     ['app.py'],
@@ -10,10 +8,10 @@ a = Analysis(
     datas=[
         ('client', 'client'),
         ('server', 'server'),
+        ('init', 'init'),
         ('.env', '.'),
     ],
     hiddenimports=[
-        'uvicorn',
         'uvicorn.logging',
         'uvicorn.loops',
         'uvicorn.loops.auto',
@@ -24,52 +22,55 @@ a = Analysis(
         'uvicorn.protocols.websockets.auto',
         'uvicorn.lifespan',
         'uvicorn.lifespan.on',
-        'fastapi',
-        'pydantic',
+        'server.index',
+        'server.api.users',
+        'server.api.csv',
+        'server.api.dashboard',
+        'server.api.history',
+        'server.libs.database.Config',
+        'server.libs.database.RunQuery',
+        'server.libs.jwt.jwt_utils',
+        'server.libs.totp.totp_utils',
+        'server.libs.users.Login',
+        'server.libs.users.Register',
+        'server.libs.csv.Add',
+        'server.libs.csv.Drop',
+        'server.libs.csv.Edit',
+        'server.libs.csv.Get',
+        'server.libs.csv.Read',
         'mysql.connector',
+        'pandas',
         'bcrypt',
         'pyotp',
         'qrcode',
-        'pandas',
     ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
-    win_no_prefer_redirects=False,
-    win_private_assemblies=False,
-    cipher=block_cipher,
     noarchive=False,
+    optimize=0,
 )
-
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+pyz = PYZ(a.pure)
 
 exe = EXE(
     pyz,
     a.scripts,
+    a.binaries,
+    a.datas,
     [],
-    exclude_binaries=True,
-    name='QUB',
+    name='Qub',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,  # Pas de console DOS
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=False,
+    icon='icon.ico', 
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='client/icon.ico' if os.path.exists('client/icon.ico') else None,
-)
-
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='QUB',
 )
