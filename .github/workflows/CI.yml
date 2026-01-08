@@ -162,13 +162,6 @@ jobs:
             -Dsonar.python.version=3.11
             -Dsonar.python.coverage.reportPaths=coverage.xml
 
-      - name: Quality Gate Check
-        uses: SonarSource/sonarqube-quality-gate-action@v1
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        continue-on-error: true 
-
   # ====================================================
   # Job 3: Sécurité (Audit)
   # ====================================================
