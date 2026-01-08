@@ -146,3 +146,85 @@ function openAddContractModal() {
 // Initialisation
 loadContractStats();
 loadContracts();
+
+const addContractModal = document.getElementById('addContractModal');
+const addContractForm = document.getElementById('addContractForm');
+
+// Ouvrir la modal
+document.getElementById('addContractBtn').addEventListener('click', () => {
+  addContractModal.classList.add('active'); // Assure-toi que ton CSS gère la classe .active pour l'affichage
+});
+
+// Fermer la modal (bouton X et Annuler)
+function closeContractModal() {
+  addContractModal.classList.remove('active');
+  addContractForm.reset();
+}
+
+document.getElementById('closeAddContractModal').addEventListener('click', closeContractModal);
+document.getElementById('cancelAddContractBtn').addEventListener('click', closeContractModal);
+
+// Calculer la date de fin automatiquement
+function calculateEndDate(startDate, months) {
+  const date = new Date(startDate);
+  date.setMonth(date.getMonth() + parseInt(months));
+  return date.toISOString().split('T')[0];
+}
+
+// Soumission du formulaire
+addContractForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // Récupération des valeurs
+  const supplier = document.getElementById('newContractSupplier').value;
+  const startDate = document.getElementById('newContractStartDate').value;
+  const duration = parseInt(document.getElementById('newContractDuration').value);
+  const status = document.getElementById('newContractStatus').value;
+
+  // Préparation des données pour l'API
+  // Note: L'ID est généré par le Python, et 'value'/'products' sont requis par ton code Python 
+  // mais absents du formulaire HTML, donc on met des valeurs par défaut pour éviter l'erreur 500.
+  const contractData = {
+    supplier: supplier,
+    start_date: startDate,
+    end_date: calculateEndDate(startDate, duration),
+    duration_months: duration,
+    status: status,
+    value: 0,       // Valeur par défaut car champ absent du formulaire
+    products: []    // Liste vide par défaut
+  };
+
+  try {
+    const response = await fetch(`${API_URL}/history/contracts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(contractData)
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      // Succès
+      if (typeof notify !== 'undefined') {
+        notify.success(`Contrat ${result.id} créé avec succès !`);
+      } else {
+        alert('Contrat créé avec succès !');
+      }
+      
+      closeContractModal();
+      loadContracts();     // Recharger la liste
+      loadContractStats(); // Recharger les stats
+    } else {
+      throw new Error(result.detail || 'Erreur lors de la création');
+    }
+  } catch (error) {
+    console.error('Erreur:', error);
+    if (typeof notify !== 'undefined') {
+      notify.error('Erreur: ' + error.message);
+    } else {
+      alert('Erreur: ' + error.message);
+    }
+  }
+});
