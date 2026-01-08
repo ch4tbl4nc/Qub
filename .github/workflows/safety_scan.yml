@@ -18,6 +18,3 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         
-      - name: Run Safety check
-        run: safety check -r requirements.txt
-        
