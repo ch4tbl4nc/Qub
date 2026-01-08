@@ -9,18 +9,18 @@ async function loadStockStats() {
   try {
     const response = await fetch(`${API_URL}/dashboard/stock/stats`);
     const stats = await response.json();
-    
+
     // Mettre à jour les KPIs
     document.getElementById('stockTotal').textContent = stats.total_quantity.toLocaleString('fr-FR');
     document.getElementById('stockLow').textContent = stats.low_stock;
     document.getElementById('stockCategories').textContent = stats.categories;
-    
+
     // Formater la valeur
-    const valueFormatted = stats.total_value >= 1000000 
+    const valueFormatted = stats.total_value >= 1000000
       ? `€${(stats.total_value / 1000000).toFixed(1)}M`
       : `€${(stats.total_value / 1000).toFixed(0)}k`;
     document.getElementById('stockValue').textContent = valueFormatted;
-    
+
     // Gérer l'alerte de stock faible
     updateLowStockAlert(stats.low_stock);
   } catch (error) {
@@ -32,7 +32,7 @@ async function loadStockStats() {
 function updateLowStockAlert(lowStockCount) {
   const alertContainer = document.querySelector('.alerts-container');
   if (!alertContainer) return;
-  
+
   if (lowStockCount > 0) {
     alertContainer.innerHTML = `
       <div class="alert alert-warning glass-card">
@@ -73,9 +73,9 @@ function renderTable() {
   }
 
   tbody.innerHTML = filteredData.map(product => {
-    const statusClass = product.status === 'Élevé' ? 'success' : 
-                       product.status === 'Moyen' ? 'warning' : 'error';
-    
+    const statusClass = product.status === 'Élevé' ? 'success' :
+      product.status === 'Moyen' ? 'warning' : 'error';
+
     return `
       <tr>
         <td>${product.id}</td>
@@ -111,7 +111,7 @@ function searchProducts() {
   if (!searchInput) return;
 
   const searchTerm = searchInput.value.toLowerCase();
-  filteredData = stockData.filter(product => 
+  filteredData = stockData.filter(product =>
     product.name.toLowerCase().includes(searchTerm) ||
     product.id.toLowerCase().includes(searchTerm) ||
     product.category.toLowerCase().includes(searchTerm) ||
@@ -172,16 +172,54 @@ function updateStats() {
   if (statsElements[0]) statsElements[0].textContent = stockData.length;
   if (statsElements[1]) statsElements[1].textContent = totalProducts.toLocaleString('fr-FR');
   if (statsElements[2]) statsElements[2].textContent = totalCategories;
-  if (statsElements[3]) statsElements[3].textContent = `€${totalValue.toLocaleString('fr-FR', {minimumFractionDigits: 0})}k`;
+  if (statsElements[3]) statsElements[3].textContent = `€${totalValue.toLocaleString('fr-FR', { minimumFractionDigits: 0 })}k`;
 }
+
+const modal = document.getElementById('productModal');
+
+function openModal(productId = null) {
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  if (productId) {
+    const product = stockData.find(p => p.id === productId);
+    document.getElementById('modalTitle').textContent = 'Modifier le produit';
+    document.getElementById('productName').value = product.name;
+    document.getElementById('productId').value = product.id;
+    document.getElementById('productRef').value = product.id;
+    document.getElementById('productCategory').value = product.category.toLowerCase();
+    document.getElementById('productSupplier').value = product.supplier.toLowerCase();
+    document.getElementById('productPrice').value = product.price;
+    document.getElementById('productMargin').value = product.margin;
+    document.getElementById('productQuantity').value = product.quantity;
+    document.getElementById('productThreshold').value = product.threshold;
+  } else {
+    document.getElementById('modalTitle').textContent = 'Ajouter un produit';
+    productForm.reset();
+  }
+}
+
+function closeModal() {
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+  productForm.reset();
+}
+
+const closeBtn = document.getElementById('closeModal');
+
+closeBtn.addEventListener('click', closeModal);
+cancelBtn.addEventListener('click', closeModal);
 
 // Fonction pour modifier un produit
 function editProduct(id) {
   const product = stockData.find(p => p.id === id);
   if (product) {
-    notify.info(`Édition de ${product.name} - Fonctionnalité à venir`);
+    openModal(product.id);
   }
 }
+
+
+
 
 // Fonction pour supprimer un produit
 async function deleteProduct(id) {
@@ -195,7 +233,7 @@ async function deleteProduct(id) {
         const response = await fetch(`${API_URL}/dashboard/products/${id}`, {
           method: 'DELETE'
         });
-        
+
         if (response.ok) {
           notify.success('Produit supprimé avec succès');
           await loadProducts(); // Recharger la liste
@@ -209,6 +247,65 @@ async function deleteProduct(id) {
     }
   );
 }
+
+const form = document.getElementById('addProductForm');
+
+form.addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const productData = {
+    id: document.getElementById('productRef').value.trim(),
+    name: document.getElementById('productName').value.trim(),
+    category: document.getElementById('productCategory').value.trim(),
+    supplier: document.getElementById('productSupplier').value,
+    margin: Number.parseFloat(document.getElementById('productMargin').value),
+    price: Number.parseFloat(document.getElementById('productPrice').value),
+    quantity: Number.parseInt(document.getElementById('productQuantity').value),
+    threshold: Number.parseInt(document.getElementById('productThreshold').value)
+  };
+
+  try {
+    const response = await fetch(`${API_URL}/dashboard/products/${document.getElementById('productId').value}`, {
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      await loadProducts(); // Recharger la liste
+    } else {
+      notify.error('Erreur lors de la modification');
+    }
+  } catch (error) {
+    console.error('Erreur:', error);
+    notify.error('Impossible de modifier le produit');
+  }
+
+  console.log(productData)
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/dashboard/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(productData)
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      notify.success('Produit modifier avec succès !');
+
+      // Rediriger après 1.5 secondes
+      setTimeout(() => {
+        window.location.href = 'stock.html';
+      }, 1500);
+    } else {
+      notify.error('Erreur lors de la modification du produit');
+    }
+  } catch (error) {
+    console.error('Erreur:', error);
+    notify.error('Impossible de communiquer avec le serveur');
+  }
+});
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
@@ -250,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-  
+
   // Charger les données
   loadStockStats();
   loadProducts();
