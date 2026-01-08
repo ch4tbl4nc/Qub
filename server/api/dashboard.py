@@ -86,7 +86,7 @@ async def get_all_products():
         result = []
         for _, row in products.iterrows():
             threshold = 20  # Seuil de stock faible
-            status = "Élevé" if row['quantity'] > threshold else ("Moyen" if row['quantity'] > 10 else "Faible")
+            status = "Élevé" if row['quantity'] > row['threshold'] else ("Moyen" if row['quantity'] > 10 else "Faible")
             result.append({
                 'id': f"REF-{str(row['id']).zfill(3)}",
                 'name': row['name'],
@@ -96,6 +96,8 @@ async def get_all_products():
                 'price': float(row['price']),
                 'sales': int(row['sales']),
                 'revenue': float(row['revenue']),
+                'threshold': row['threshold'],
+                'margin': row['margin'],
                 'status': status
             })
         return result
@@ -132,6 +134,8 @@ async def create_product(product: dict):
             'supplier': product['supplier'],
             'quantity': product['quantity'],
             'price': product['price'],
+            'threshold': product['threshold'],
+            'margin': product['margin'],
             'sales': 0,  # Initialiser à 0
             'revenue': 0.0  # Initialiser à 0
         }

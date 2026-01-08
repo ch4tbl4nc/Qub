@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,12 @@
   <link rel="stylesheet" href="styles/global.css">
   <link rel="stylesheet" href="styles/stock.css">
 </head>
+
 <body>
   <!-- Sidebar -->
   <aside class="sidebar">
     <h1 class="logo">QUB</h1>
-    
+
     <ul class="nav-menu">
       <li class="nav-item">
         <a href="dashboard.html" class="nav-link">
@@ -45,7 +47,7 @@
         </a>
       </li>
     </ul>
-    
+
     <div class="user-section">
       <div class="user-info glass-card">
         <div class="user-avatar" id="userAvatar">--</div>
@@ -56,7 +58,7 @@
       </div>
     </div>
   </aside>
-  
+
   <!-- Main Content -->
   <main class="main-content">
     <div class="page-header">
@@ -64,12 +66,12 @@
       <div class="header-actions">
       </div>
     </div>
-    
+
     <!-- Alerts -->
     <div class="alerts-container">
       <!-- L'alerte sera ajoutée dynamiquement si nécessaire -->
     </div>
-    
+
     <!-- Stats Cards -->
     <div class="stock-stats">
       <div class="stat-card glass-card">
@@ -79,7 +81,7 @@
           <div class="stat-label">Produits en stock</div>
         </div>
       </div>
-      
+
       <div class="stat-card glass-card">
         <div class="stat-icon">⚠️</div>
         <div class="stat-info">
@@ -87,7 +89,7 @@
           <div class="stat-label">Stock faible</div>
         </div>
       </div>
-      
+
       <div class="stat-card glass-card">
         <div class="stat-icon">🏷️</div>
         <div class="stat-info">
@@ -95,7 +97,7 @@
           <div class="stat-label">Catégories</div>
         </div>
       </div>
-      
+
       <div class="stat-card glass-card">
         <div class="stat-icon">💰</div>
         <div class="stat-info">
@@ -104,13 +106,13 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Filters -->
     <div class="filters-section glass-card">
       <div class="filter-group">
         <input type="text" class="input-field" placeholder="🔍 Rechercher un produit..." id="searchInput">
       </div>
-      
+
       <div class="filter-group">
         <select class="input-field" id="categoryFilter">
           <option value="">Toutes les catégories</option>
@@ -120,7 +122,7 @@
           <option value="audio">Audio</option>
         </select>
       </div>
-      
+
       <div class="filter-group">
         <select class="input-field" id="supplierFilter">
           <option value="">Tous les fournisseurs</option>
@@ -129,7 +131,7 @@
           <option value="megadistrib">MegaDistrib</option>
         </select>
       </div>
-      
+
       <div class="filter-group">
         <select class="input-field" id="stockFilter">
           <option value="">Tous les stocks</option>
@@ -139,7 +141,7 @@
         </select>
       </div>
     </div>
-    
+
     <!-- Stock Table -->
     <div class="table-container glass-card">
       <table class="stock-table">
@@ -161,7 +163,7 @@
       </table>
     </div>
   </main>
-  
+
   <!-- Modal Ajout/Modification Produit -->
   <div class="modal" id="productModal">
     <div class="modal-overlay"></div>
@@ -170,26 +172,28 @@
         <h2 class="modal-title" id="modalTitle">Ajouter un produit</h2>
         <button class="modal-close" id="closeModal">✕</button>
       </div>
-      
-      <form class="modal-body" id="productForm">
+
+      <form class="modal-body" id="addProductForm">
+        <input type="text" class="input-field" id="productId" hidden required>
+
         <div class="form-row">
           <div class="input-group">
             <label class="input-label">Nom du produit</label>
             <input type="text" class="input-field" id="productName" required>
           </div>
-          
+
           <div class="input-group">
             <label class="input-label">ID Référence</label>
-            <input type="text" class="input-field" id="productRef" required>
+            <input type="text" class="input-field" id="productRef" disabled required>
           </div>
         </div>
-        
+
         <div class="form-row">
           <div class="input-group">
             <label class="input-label">Catégorie</label>
             <input type="text" class="input-field" id="productCategory" required>
           </div>
-          
+
           <div class="input-group">
             <label class="input-label">Fournisseur</label>
             <select class="input-field" id="productSupplier" required>
@@ -200,24 +204,33 @@
             </select>
           </div>
         </div>
-        
+
         <div class="form-row">
           <div class="input-group">
             <label class="input-label">Prix (€)</label>
             <input type="number" class="input-field" id="productPrice" step="0.01" required>
           </div>
-          
+
+          <div class="input-group">
+            <label class="input-label" for="productMargin">
+              Marge (%) <span class="required">*</span>
+            </label>
+            <input type="number" class="input-field" id="productMargin" step="0.1" min="0" max="1000" placeholder="0.0"
+              required>
+            <small class="input-help">Marge bénéficiaire en pourcentage</small>
+          </div>
+
           <div class="input-group">
             <label class="input-label">Quantité</label>
             <input type="number" class="input-field" id="productQuantity" required>
           </div>
         </div>
-        
+
         <div class="input-group">
           <label class="input-label">Seuil d'alerte stock faible</label>
           <input type="number" class="input-field" id="productThreshold" value="10">
         </div>
-        
+
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" id="cancelBtn">Annuler</button>
           <button type="submit" class="btn btn-primary">Enregistrer</button>
@@ -231,4 +244,5 @@
   <script src="js/user-info.js"></script>
   <script src="js/stock-new.js"></script>
 </body>
+
 </html>
