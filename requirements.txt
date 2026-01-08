@@ -11,3 +11,4 @@ requests
 bandit
 pyinstaller
 safety
+Pillow
