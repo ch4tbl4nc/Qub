@@ -1,38 +1,28 @@
 
-from libs.database.Config import _db_config
+"""Fonction utilitaire pour exécuter des requêtes SQL dans QUB."""
 import mysql.connector
+from libs.database.Config import _db_config
 
 def run_query(query, params=None, fetch=False):
-    """
-    Fonction unique pour se connecter, exécuter et fermer.
-    """
+    """Exécute une requête SQL et retourne le résultat ou le nombre de lignes affectées."""
     config = _db_config()
     connection = None
     cursor = None
     result = None
-
     try:
-        # Connexion
         connection = mysql.connector.connect(**config)
-        
-        # Preparation (Security)
         cursor = connection.cursor()
         cursor.execute(query, params)
-
-        # Result handling
         if fetch:
             result = cursor.fetchall()
         else:
             connection.commit()
-            result = cursor.rowcount 
-
-    #Error handling
+            result = cursor.rowcount
     except mysql.connector.Error as err:
         print(f"Erreur SQL : {err}")
-
-    # Cleanup
     finally:
-        if cursor: cursor.close()
-        if connection: connection.close()
-    
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
     return result

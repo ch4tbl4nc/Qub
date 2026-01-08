@@ -1,11 +1,12 @@
 
+"""Configuration de la base de données pour QUB."""
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
 def _db_config():
-    """Configuration de la base de données. !!! POUR DEV SINON UTILISER DES VARIABLES D'ENVIRONNEMENT !!!"""
+    """Retourne la configuration de connexion MySQL depuis les variables d'environnement."""
     return {
         'user': os.environ.get('DB_USER'),
         'password': os.environ.get('DB_PASS'),

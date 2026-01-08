@@ -1,3 +1,4 @@
+"""Endpoints utilisateurs: inscription, connexion, gestion de compte et 2FA."""
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, EmailStr, constr
@@ -26,7 +27,7 @@ class UserRegister(BaseModel):
 
 class UserLogin(BaseModel):
     username: constr(min_length=6, max_length=25)
-    password: constr(min_length=14)
+    password: str
     totp_code: str | None = None
 
 class TOTPEnable(BaseModel):
@@ -38,7 +39,7 @@ class TOTPVerify(BaseModel):
 
 class ChangePassword(BaseModel):
     current_password: str
-    new_password: constr(min_length=14)
+    new_password: constr(min_length=8)
 
 @router.post("/change-password")
 async def change_password(data: ChangePassword, current_user: dict = Depends(get_current_user)):

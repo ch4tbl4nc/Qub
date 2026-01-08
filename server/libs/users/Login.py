@@ -9,7 +9,7 @@ def login_user(username: str, password: str) -> Dict[str, Any]:
     Vérifie les identifiants utilisateur.
     Retourne dict avec success + user_id ou error.
     """
-    query = "SELECT id, password_hash FROM users WHERE username = %s LIMIT 1"
+    query = "SELECT id, password_hash, role FROM users WHERE username = %s LIMIT 1"
     params = (username,)
     result = run_query(query, params, fetch=True)
     
@@ -19,6 +19,7 @@ def login_user(username: str, password: str) -> Dict[str, Any]:
     user_row = result[0]
     user_id = user_row[0]
     pw_hash = user_row[1]
+    user_role = user_row[2] if len(user_row) > 2 else None
 
     # prepared cursor peut retourner bytes
     if isinstance(pw_hash, str):
@@ -31,4 +32,4 @@ def login_user(username: str, password: str) -> Dict[str, Any]:
     if not bcrypt.checkpw(password_bytes, pw_hash):
         return {'success': False, 'error': 'Identifiants invalides'}
     
-    return {'success': True, 'user_id': int(user_id)}
+    return {'success': True, 'user_id': int(user_id), 'role': (user_role.decode() if isinstance(user_role, bytes) else user_role)}

@@ -58,8 +58,8 @@ async def get_dashboard_stats():
 async def get_stock_stats():
     """Récupère les statistiques pour la page stock"""
     try:
-        products = pd.read_csv(DATA_DIR / "products.csv")
-        categories = pd.read_csv(DATA_DIR / "categories.csv")
+        products = pd.read_csv(DATA_DIR / PRODUCTS_CSV)
+        categories = pd.read_csv(DATA_DIR / CATEGORIES_CSV)
         
         # Calculer total stock
         total_quantity = products['quantity'].sum()
@@ -86,7 +86,7 @@ async def get_stock_stats():
 async def get_all_products():
     """Récupère tous les produits"""
     try:
-        products = pd.read_csv(DATA_DIR / "products.csv")
+        products = pd.read_csv(DATA_DIR / PRODUCTS_CSV)
         # Calculer le statut du stock
         result = []
         for _, row in products.iterrows():
@@ -118,7 +118,7 @@ async def get_all_products():
 async def delete_product(product_id: str):
     """Supprime un produit"""
     try:
-        products = pd.read_csv(DATA_DIR / "products.csv")
+        products = pd.read_csv(DATA_DIR / PRODUCTS_CSV)
         # Extraire l'ID numérique
         numeric_id = int(product_id.replace('REF-', ''))
         products = products[products['id'] != numeric_id]
@@ -162,7 +162,7 @@ async def create_product(product: dict):
 async def get_all_suppliers():
     """Récupère tous les fournisseurs"""
     try:
-        suppliers = pd.read_csv(DATA_DIR / "suppliers.csv")
+        suppliers = pd.read_csv(DATA_DIR / SUPPLIERS_CSV)
         return suppliers.to_dict('records')
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,23 +1,30 @@
-import jwt 
-from datetime import datetime, timedelta, timezone
-from dotenv import load_dotenv
+"""Utilitaires JWT pour créer et vérifier les tokens d'accès."""
 import os
+from datetime import datetime, timedelta, timezone
+
+import jwt
+from dotenv import load_dotenv
 
 load_dotenv()
+
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 JWT_ACCESS_TOKEN_TIMES = 720  # minutes
 
-def create_access_token(data: dict):
+
+def create_access_token(data: dict) -> str:
+    """Crée un access token JWT contenant les données fournies.
+
+    Le token contient les champs `exp` et `iat`.
+    """
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=JWT_ACCESS_TOKEN_TIMES)
-    to_encode.update({
-        "exp": expire,
-        "iat": datetime.now(timezone.utc)
-    })
+    to_encode.update({"exp": expire, "iat": datetime.now(timezone.utc)})
     return jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
-def verify_access_token(token: str):
+
+def verify_access_token(token: str) -> dict | None:
+    """Vérifie et décode un token JWT. Retourne le payload ou None si invalide."""
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         return payload
