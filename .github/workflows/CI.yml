@@ -186,12 +186,23 @@ jobs:
         with:
           name: dependencies-audit
           path: deps-audit.json
+  
+  # Job 4: Safety
+  security:
+    runs-on: ubuntu-latest
+    name: Safety Security Scan
+    steps:
+      - name: Check out code
+        uses: actions/checkout@master
+      
+      - name: Set up Python
+        uses: actions/setup-python@v2
 
-  # Job 4: Build Summary
+  # Job 5: Build Summary
   build-summary:
     name: Build Summary
     runs-on: ubuntu-latest
-    needs: [tests-and-quality, sonarqube-analysis, security-audit]
+    needs: [tests-and-quality, sonarqube-analysis, security-audit,security]
     if: always()
     
     steps:
