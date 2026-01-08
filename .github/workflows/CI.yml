@@ -9,7 +9,9 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
+  # ====================================================
   # Job 1: Tests et qualité du code
+  # ====================================================
   tests-and-quality:
     name: Tests & Quality Checks
     runs-on: ubuntu-latest
@@ -30,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout du code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # CORRIGÉ
         with:
           fetch-depth: 0
 
@@ -71,9 +73,12 @@ jobs:
           python -m py_compile server/index.py
           python -m py_compile init/init.py
           
-          for file in server/api/*.py; do
-            python -m py_compile "$file" && echo "✓ $file"
-          done
+          # Boucle sécurisée au cas où le dossier est vide
+          if ls server/api/*.py 1> /dev/null 2>&1; then
+            for file in server/api/*.py; do
+              python -m py_compile "$file" && echo "✓ $file"
+            done
+          fi
 
       - name: Vérification structure des fichiers
         run: |
@@ -103,7 +108,7 @@ jobs:
           test -f server/data/orders.csv && echo "✓ orders.csv"
           test -f server/data/contracts.csv && echo "✓ contracts.csv"
 
-      - name: Exécution des tests (si présents)
+      - name: Exécution des tests
         run: |
           if [ -d "tests" ]; then
             pytest tests/ -v --cov=server --cov-report=xml --cov-report=term
@@ -114,7 +119,17 @@ jobs:
           fi
         continue-on-error: true
 
+      # AJOUT CRITIQUE POUR SONAR
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 1
+
+  # ====================================================
   # Job 2: Analyse SonarQube
+  # ====================================================
   sonarqube-analysis:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
@@ -122,12 +137,19 @@ jobs:
     
     steps:
       - name: Checkout du code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # CORRIGÉ
         with:
           fetch-depth: 0
 
+      # AJOUT CRITIQUE POUR SONAR
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+          path: . 
+
       - name: Analyse SonarQube
-        uses: SonarSource/sonarqube-scan-action@v4
+        uses: SonarSource/sonarqube-scan-action@v6 # CORRIGÉ (v6 pour la sécurité)
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -147,7 +169,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         continue-on-error: true 
 
-  # Job 3: Sécurité
+  # ====================================================
+  # Job 3: Sécurité (Audit)
+  # ====================================================
   security-audit:
     name: Security Audit
     runs-on: ubuntu-latest
@@ -186,23 +210,38 @@ jobs:
         with:
           name: dependencies-audit
           path: deps-audit.json
-  
-  # Job 4: Safety
+
+  # ====================================================
+  # Job 4: Safety (Scan supplémentaire)
+  # ====================================================
   security:
     runs-on: ubuntu-latest
     name: Safety Security Scan
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v4 # CORRIGÉ (master -> v4 pour stabilité)
       
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4 # CORRIGÉ (v2 -> v4)
+        with:
+            python-version: "3.11"
+      
+      # Note: Safety nécessite souvent une commande run ici, 
+      # je suppose que vous utilisez l'action par défaut ou que vous avez oublié une étape run.
+      # Si c'était juste setup, c'est vide. J'ajoute une commande safety standard.
+      - name: Run Safety
+        run: |
+          pip install safety
+          safety check || true
+        continue-on-error: true
 
+  # ====================================================
   # Job 5: Build Summary
+  # ====================================================
   build-summary:
     name: Build Summary
     runs-on: ubuntu-latest
-    needs: [tests-and-quality, sonarqube-analysis, security-audit,security]
+    needs: [tests-and-quality, sonarqube-analysis, security-audit, security]
     if: always()
     
     steps:
@@ -215,6 +254,7 @@ jobs:
           echo "✓ Tests & Quality: ${{ needs.tests-and-quality.result }}"
           echo "✓ SonarQube Analysis: ${{ needs.sonarqube-analysis.result }}"
           echo "✓ Security Audit: ${{ needs.security-audit.result }}"
+          echo "✓ Safety Scan: ${{ needs.security.result }}"
           echo ""
           echo "=========================================="
           echo ""
