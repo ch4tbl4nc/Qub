@@ -9,4 +9,8 @@ pandas
 pywebview
 requests
 bandit
+<<<<<<< HEAD
 pyinstaller
+=======
+safety
+>>>>>>> 23ad8a3099e3461c9bf7e7f4699efdc7580ed6fa
