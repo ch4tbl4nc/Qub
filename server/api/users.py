@@ -38,14 +38,12 @@ class TOTPVerify(BaseModel):
 
 class ChangePassword(BaseModel):
     current_password: str
-    new_password: constr(min_length=8)
+    new_password: constr(min_length=14)
 
 @router.post("/change-password")
 async def change_password(data: ChangePassword, current_user: dict = Depends(get_current_user)):
     """Change le mot de passe de l'utilisateur connecté"""
     username = current_user.get('sub')
-    print(f"[DEBUG] Username from token: {username}")
-    print(f"[DEBUG] Current user payload: {current_user}")
     
     # Vérifier l'ancien mot de passe
     query = "SELECT password_hash FROM users WHERE username = %s"

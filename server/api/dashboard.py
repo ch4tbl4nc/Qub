@@ -6,14 +6,19 @@ router = APIRouter()
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
+# Constantes pour les noms de fichiers
+PRODUCTS_CSV = "products.csv"
+SUPPLIERS_CSV = "suppliers.csv"
+CATEGORIES_CSV = "categories.csv"
+
 @router.get("/stats")
 async def get_dashboard_stats():
     """Récupère les statistiques pour le dashboard"""
     try:
         # Charger les fichiers CSV
-        products = pd.read_csv(DATA_DIR / "products.csv")
-        suppliers = pd.read_csv(DATA_DIR / "suppliers.csv")
-        categories = pd.read_csv(DATA_DIR / "categories.csv")
+        products = pd.read_csv(DATA_DIR / PRODUCTS_CSV)
+        suppliers = pd.read_csv(DATA_DIR / SUPPLIERS_CSV)
+        categories = pd.read_csv(DATA_DIR / CATEGORIES_CSV)
         
         # Calculer les KPIs
         total_revenue = products['revenue'].sum()
@@ -85,8 +90,13 @@ async def get_all_products():
         # Calculer le statut du stock
         result = []
         for _, row in products.iterrows():
-            threshold = 20  # Seuil de stock faible
-            status = "Élevé" if row['quantity'] > row['threshold'] else ("Moyen" if row['quantity'] > 10 else "Faible")
+            # Déterminer le statut du stock
+            if row['quantity'] > row['threshold']:
+                status = "Élevé"
+            elif row['quantity'] > 10:
+                status = "Moyen"
+            else:
+                status = "Faible"
             result.append({
                 'id': f"REF-{str(row['id']).zfill(3)}",
                 'name': row['name'],
@@ -142,7 +152,7 @@ async def create_product(product: dict):
         
         # Ajouter au DataFrame
         products = pd.concat([products, pd.DataFrame([new_product])], ignore_index=True)
-        products.to_csv(DATA_DIR / "products.csv", index=False)
+        products.to_csv(DATA_DIR / PRODUCTS_CSV, index=False)
         
         return {"success": True, "message": "Produit ajouté", "id": f"REF-{str(new_id).zfill(3)}"}
     except Exception as e:

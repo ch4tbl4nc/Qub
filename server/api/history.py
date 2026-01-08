@@ -5,6 +5,13 @@ from pathlib import Path
 router = APIRouter()
 DATA_DIR = Path(__file__).parent.parent / "data"
 
+# Constantes pour les noms de fichiers
+CONTRACTS_CSV = "contracts.csv"
+ORDERS_CSV = "orders.csv"
+ORDER_ITEMS_CSV = "order_items.csv"
+CONTRACT_PRODUCTS_CSV = "contract_products.csv"
+PRODUCTS_CSV = "products.csv"
+
 @router.get("/contracts/stats")
 async def get_contract_stats():
     """Récupère les statistiques des contrats"""

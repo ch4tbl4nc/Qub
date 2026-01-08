@@ -1,8 +1,9 @@
-import webview
-import uvicorn
-import multiprocessing
 import time
 import sys
+import requests
+import multiprocessing
+import webview
+import uvicorn
 from pathlib import Path
 
 def start_backend():
@@ -29,7 +30,6 @@ def start_backend():
 
 def wait_for_backend():
     """Attend que le backend soit prêt"""
-    import requests
     max_attempts = 30
     for i in range(max_attempts):
         try:
@@ -42,14 +42,11 @@ def wait_for_backend():
 if __name__ == '__main__':
     # Nécessaire pour Windows et multiprocessing
     multiprocessing.freeze_support()
-    
     print("🚀 Démarrage de QUB...")
     print("📡 Lancement du serveur backend...")
-    
     # Lancer le backend dans un processus séparé
     backend_process = multiprocessing.Process(target=start_backend, daemon=True)
     backend_process.start()
-    
     # Attendre que le backend soit prêt
     if wait_for_backend():
         print("✅ Backend prêt !")

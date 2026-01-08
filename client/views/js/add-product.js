@@ -156,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function () {
       });
 
       if (response.ok) {
-        const result = await response.json();
         notify.success('Produit ajouté avec succès !');
 
         // Rediriger après 1.5 secondes
@@ -171,64 +170,4 @@ document.addEventListener('DOMContentLoaded', function () {
       notify.error('Impossible de communiquer avec le serveur');
     }
   }
-
-  // Fonction de notification (deprecated - utiliser notify)
-  function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type} glass-card`;
-    notification.style.position = 'fixed';
-    notification.style.top = '20px';
-    notification.style.right = '20px';
-    notification.style.zIndex = '9999';
-    notification.style.minWidth = '300px';
-    notification.style.animation = 'slideIn 0.3s ease-out';
-
-    let icon;
-    if (type === 'success') {
-      icon = '✓';
-    } else if (type === 'error') {
-      icon = '✕';
-    } else {
-      icon = 'ℹ';
-    }
-
-    notification.innerHTML = `
-      <span class="alert-icon">${icon}</span>
-      <div class="alert-content">${message}</div>
-    `;
-
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-      notification.style.animation = 'slideOut 0.3s ease-out';
-      setTimeout(() => notification.remove(), 300);
-    }, 3000);
-  }
-
-  // Animation CSS
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateX(100%);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-    
-    @keyframes slideOut {
-      from {
-        opacity: 1;
-        transform: translateX(0);
-      }
-      to {
-        opacity: 0;
-        transform: translateX(100%);
-      }
-    }
-  `;
-  document.head.appendChild(style);
 });
