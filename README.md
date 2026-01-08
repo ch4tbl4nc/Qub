@@ -38,7 +38,7 @@
 2. **Créer l'environnement virtuel**
    ```bash
    python -m venv venv
-   venv\Scripts\activate
+   .\venv\Scripts\activate
    ```
 
 3. **Installer les dépendances**
@@ -55,6 +55,10 @@
    DB_HOST=127.0.0.1
    DB_PORT=3306
    DB_NAME=qub_db
+
+   JWT_SECRET= # Votre clé a mettre
+   JWT_ALGORITHM=HS256
+   JWT_ACCESS_TOKEN_TIMES=720 # minutes
    ```
 
 5. **Initialiser la base de données**
@@ -97,11 +101,6 @@ Qub/
 └── init/               # Scripts d'initialisation
 ```
 
-## 👥 Compte par défaut
-
-- **Username** : `admin`
-- **Password** : `admin123`
-
 ## 📝 Licence
 
 MIT License - voir [LICENSE](LICENSE) pour plus de détails.
@@ -109,5 +108,5 @@ MIT License - voir [LICENSE](LICENSE) pour plus de détails.
 ---
 
 <div align="center">
-  Développé avec ❤️ par <a href="https://github.com/ch4tbl4nc">ch4tbl4nc</a>
+  Développé avec ❤️ par <a href="https://github.com/ch4tbl4nc">Cḧ4ŧ Bŀ4ŋc</a> | <a href="https://github.com/TimDcmtr">LeMecha</a> | <a href="https://github.com/Kikiv92-dev">Kikiv92-dev</a> | <a href="https://github.com/SwagDeCoq">SwagDeCoq</a>
 </div>
