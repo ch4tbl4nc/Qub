@@ -9,3 +9,4 @@ pandas
 pywebview
 requests
 bandit
+safety
